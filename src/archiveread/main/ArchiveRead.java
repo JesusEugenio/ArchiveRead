@@ -1,4 +1,4 @@
-//Version 1.0
+// Archive Read - Version 1.0
 package archiveread.main;
 
 import java.awt.*;
