@@ -1,6 +1,6 @@
 // Archive Read - Version 1.0.0
 // ================================
-// ...
+// Laura Alvarez y Jesus Eugenio
 // ================================
 package archiveread.main;
 
