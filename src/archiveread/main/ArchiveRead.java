@@ -405,6 +405,8 @@ class Lector extends Usuario {
     } 
 }
 
+//;D....
+
 class Administrador extends Usuario { 
     public Administrador(String m, String p, String n) { 
         super(m, p, n); 
