@@ -349,6 +349,7 @@ public class ArchiveRead extends JFrame {
     				JLabel lblUser = new JLabel("");
     				
     				JTextArea txtTexto = new JTextArea(partes[1]);
+    				//lblVacio.setFont(CargarFuente.get(CargarFuente.REGULAR, 13f));
     				txtTexto.setForeground(Color.DARK_GRAY);
     				txtTexto.setLineWrap(true);
     				txtTexto.setWrapStyleWord(true);
@@ -370,16 +371,127 @@ public class ArchiveRead extends JFrame {
     	}catch(IOException e) {
     		e.printStackTrace();
     	}
-    	
-    	
+    }
+    
+    // ============================================
+    // MÉTODOS DE GENERACION DE REPORTES (TXT)
+    // ============================================
+    
+    
+    private void generarReportePrestamos() {
+    	try{
+    		File file = new File("reporte_prestamos.txt");
+    		try(BufferedWriter writer = new BufferedWriter(new FileWriter(file))){
+    			writer.write("========================================\n");
+    			writer.write("      REPORTE DE LIBROS PRESTADOS       \n");
+    			writer.write("========================================\n");
+    			
+    			boolean hayPrestamos = false;
+    			for(Libro l : gestorBiblioteca.obtenerLibros()) {
+    				if(!l.isDisponible()) {
+    					writer.write("Título: " + l.getTitulo() + "\n");
+    					writer.write("Autor: " + l.getAutor() + "\n");
+    					writer.write("Presstado a (Matrícula): " + l.getMatriculaPrestamo() + "\n");
+    					
+    					Usuario u = gestorUsuarios.buscarPorMatricula(l.getMatriculaPrestamo());
+    					if(u != null) {
+    						writer.write("Nombre del Lector: " + u.getNombre() + "\n");
+    					}
+    					
+    					writer.write("------------------------------------------\n");
+    					hayPrestamos = true;
+    				}
+    			}
+    			
+    			if(!hayPrestamos) {
+    				writer.write("No hay libros prestados en este momento. \n");
+    			}
+    			
+    		}
+    		JOptionPane.showMessageDialog(this, "Reporte generado Exitosamente en 'reporte_prestamos.txt'");
+    	}catch(IOException e) {
+    		JOptionPane.showMessageDialog(this, "Error al generar el reporte de préstamos.", "Error", JOptionPane.ERROR_MESSAGE);
+    		e.printStackTrace();
+    	}
     }
     
     
+    private void limpiarDirectorio(File dir) {
+    	if(dir.exists() && dir.isDirectory()) {
+    		File[] archivos = dir.listFiles();
+    		if(archivos != null) {
+    			for(File f : archivos) {
+    				f.delete();
+    			}
+    		}
+    	}
+    }
+    
+    private void generarReporteCategorias() {
+    	try {
+    		File dir = new File("reportes_categorias");
+    		if(!dir.exists()) {
+    			dir.mkdirs();
+    		} else {
+    			limpiarDirectorio(dir);
+    		}
+    		
+    		ArrayList<String> categorias = gestorBiblioteca.obtenerCategoriasUnicas();
+    		for(String cat : categorias) {
+    			String nombreSeguro = limpiarNombreArchivo(cat);
+    			File file = new File(dir, "Categoria_" + nombreSeguro + ".txt");
+    			try(BufferedWriter writer = new BufferedWriter(new FileWriter(file))){
+    				writer.write("--- CATEGORÍA: " + cat + " ---\n\n");
+    				for(Libro l : gestorBiblioteca.filtrarPorCategoria(cat)) {
+    					writer.write("- " + l.getTitulo() + " (Autor: " + l.getAutor() + ")\n");
+    				}
+    			}
+    		}
+    		JOptionPane.showMessageDialog(this, "Reportes de categorías generados en la carpeta 'reportes_categorias'.");
+    		
+    	}catch(IOException e) {
+    		e.printStackTrace();
+    	}
+    }
+    
+    private void generarReporteAutores() {
+    	try {
+    		File dir = new File("reportes_autores");
+    		if(!dir.exists()) {
+    			dir.mkdirs();
+    		} else {
+    			limpiarDirectorio(dir);
+    		}
+    		
+    		ArrayList<String> autores = new ArrayList<>();
+    		for(Libro l : gestorBiblioteca.obtenerLibros()) {
+    			if(!autores.contains(l.getAutor())) {
+    				autores.add(l.getAutor());
+    			}
+    		}
+    		
+    		for(String autor : autores) {
+    			String nombreSeguro = limpiarNombreArchivo(autor);
+    			File file = new File(dir, "Autor_" + nombreSeguro + ".txt");
+    			try(BufferedWriter writer = new BufferedWriter(new FileWriter(file))){
+    				writer.write("--- AUTOR: " + autor + " ---\n\n");
+    				for(Libro l : gestorBiblioteca.obtenerLibros()) {
+    					writer.write("- " + l.getTitulo() + " (" + l.getCategoria() + ")\n");
+    				}
+    			}
+    		}
+    		JOptionPane.showMessageDialog(this, "Reportes de autores generados en la carpeta 'reportes_autores'.");
+    		
+    	}catch(IOException e) {
+    		e.getStackTrace();
+    	}
+    }
     
     
     
     private JLabel crearEtiquetaVacia(String texto) {
     	JLabel lblVacio = new JLabel(texto);
+    	//lblVacio.setFont(CargarFuente.get(CargarFuente.REGULAR, 13f));
     	lblVacio.setForeground(Color.GRAY);
     	lblVacio.setBorder(new EmptyBorder(0, 10, 0,0 ));
     	lblVacio.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -584,12 +696,22 @@ class Libro implements Serializable {
 
     // Getters y Setters necesarios
     public String getTitulo() { return titulo; }
+    public String getAutor() { return autor; }
     public String getRutaImagen() { return rutaImagen; }
     public ArrayList<String> getCategorias() { return categorias; }
     public boolean isDisponible() { return disponible; }
     public void setDisponible(boolean d) { this.disponible = d; }
     public String getMatriculaPrestamo() { return matriculaPrestamo; }
     public void setMatriculaPrestamo(String m) { this.matriculaPrestamo = m; }
+    
+    public String getCategoria() {
+    	if(categorias != null && !categorias.isEmpty()) {
+    		return categorias.get(0);
+    	} else {
+    		return "General";
+    	}
+    }
+
     public boolean estaGuardado(String matricula) { return usuariosQueGuardaron.contains(matricula); }
     
     public void toggleGuardado(String matricula) { 
