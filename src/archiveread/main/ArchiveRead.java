@@ -242,6 +242,7 @@ public class ArchiveRead extends JFrame {
         actualizarPantalla(gestorBiblioteca.obtenerLibros()); // Refresca UI
     }
     
+    
     private String limpiarNombreArchivo(String nombre) {
     	if(nombre == null) {
     		return "desconocido";
@@ -252,7 +253,7 @@ public class ArchiveRead extends JFrame {
     	return sinEspacios.replaceAll("[^a-zA-Z0-9]", "");
     }
     
-    
+    //Renombra la ruta de la imagen que suba el administrador y se copia en un directorio/carpeta
     private String guardarPortada(String rutaOrigen, String titulo) {
     	if(rutaOrigen == null || rutaOrigen.contains("default.jpg")) {
     		return "covers/default.jpg";
@@ -294,6 +295,97 @@ public class ArchiveRead extends JFrame {
     	
     }
     
+    // ======================================
+    // MÉTODOS DE LÓGICA DE REVIEWS 
+    // ====================================== 
+    
+    
+    private void guardarReview(Libro libro, String usuario, String texto) {
+    	File dir = new File("reviews/");
+    	if(!dir.exists()) {
+    		dir.mkdirs();
+    	}
+    	
+    	String nombreSeguro = limpiarNombreArchivo(libro.getTitulo());
+    	String nombreArchivo = "reviews/" + nombreSeguro + "_review.txt";
+    	
+    	try (BufferedWriter writer = new BufferedWriter(new FileWriter(nombreArchivo, true))){
+    		writer.write(usuario + "|||" + texto);
+    		writer.newLine();
+    	}catch(IOException e){
+    		e.printStackTrace();
+    	}
+    }
+    
+    private void cargarReviews(Libro libro, JPanel panelLista) {
+    	String nombreSeguro = limpiarNombreArchivo(libro.getTitulo());
+    	String nombreArchivo = "reviews/" + nombreSeguro + "_review.txt";
+    	File archivo = new File(nombreArchivo);
+    	
+    	if(!archivo.exists()) {
+    		panelLista.add(crearEtiquetaVacia("Aun no hay reviews. !Sé el primero en opinar¡"));
+    		return;
+    	}
+    	
+    	try(BufferedReader reader = new BufferedReader(new FileReader(archivo))){
+    		String linea;
+    		boolean hayReviews = false;
+    		
+    		while((linea = reader.readLine()) != null) {
+    			String [] partes = linea.split("\\|\\|\\|");
+    			
+    			if(partes.length == 2){
+    				JPanel item = new JPanel(new BorderLayout(5,5));
+    				item.setBackground(Color.WHITE);
+    				item.setBorder(BorderFactory.createCompoundBorder(
+						BorderFactory.createEmptyBorder(0, 0, 10, 0),
+						BorderFactory.createCompoundBorder(
+								new LineBorder(new Color(230, 230, 230), 1),
+								new EmptyBorder(10, 10, 10, 10)
+								)
+						));
+    				item.setAlignmentX(Component.LEFT_ALIGNMENT);
+    				
+    				JLabel lblUser = new JLabel("");
+    				
+    				JTextArea txtTexto = new JTextArea(partes[1]);
+    				txtTexto.setForeground(Color.DARK_GRAY);
+    				txtTexto.setLineWrap(true);
+    				txtTexto.setWrapStyleWord(true);
+    				txtTexto.setEditable(false);
+    				txtTexto.setOpaque(false);
+    				
+    				item.add(lblUser, BorderLayout.NORTH);
+    				item.add(txtTexto, BorderLayout.CENTER);
+    				
+    				panelLista.add(item);
+    				hayReviews = true;
+    			}
+    		}
+    		
+    		if(!hayReviews) {
+    			panelLista.add(crearEtiquetaVacia("Aun no hay reviews. !Sé el primero en opinar¡"));
+    		}
+    		
+    	}catch(IOException e) {
+    		e.printStackTrace();
+    	}
+    	
+    	
+    }
+    
+    
+    
+    
+    
+    private JLabel crearEtiquetaVacia(String texto) {
+    	JLabel lblVacio = new JLabel(texto);
+    	lblVacio.setForeground(Color.GRAY);
+    	lblVacio.setBorder(new EmptyBorder(0, 10, 0,0 ));
+    	lblVacio.setAlignmentX(Component.LEFT_ALIGNMENT);
+    	return lblVacio;
+    }
+     
     
 }
 
