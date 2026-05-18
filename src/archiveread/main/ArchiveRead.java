@@ -6,6 +6,9 @@ package archiveread.main;
 
 import java.awt.*;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -238,6 +241,60 @@ public class ArchiveRead extends JFrame {
         gestorBiblioteca.actualizarLibro(); // Guarda en binario
         actualizarPantalla(gestorBiblioteca.obtenerLibros()); // Refresca UI
     }
+    
+    private String limpiarNombreArchivo(String nombre) {
+    	if(nombre == null) {
+    		return "desconocido";
+    	}
+    	String normalizado = Normalizer.normalize(nombre, Normalizer.Form.NFD);
+    	String sinAcentos = normalizado.replaceAll("[\\p{InCombiningDiacriticalMarks}]", "");
+    	String sinEspacios = sinAcentos.replace(" ", "");
+    	return sinEspacios.replaceAll("[^a-zA-Z0-9]", "");
+    }
+    
+    
+    private String guardarPortada(String rutaOrigen, String titulo) {
+    	if(rutaOrigen == null || rutaOrigen.contains("default.jpg")) {
+    		return "covers/default.jpg";
+    	}
+    	
+    	try {
+    		File archivoOrigen = new File(rutaOrigen);
+    		if(!archivoOrigen.exists()) {
+    			return rutaOrigen;
+    		}
+    		
+    		String extension = "";
+    		int i = rutaOrigen.lastIndexOf('.');
+    		if(i > 0) {
+    			extension = rutaOrigen.substring(i);
+    		}
+    		
+    		String nombreSeguro = limpiarNombreArchivo(titulo);
+    		String nuevoNombreArchivo = nombreSeguro + "_cover" + extension;
+    		
+    		File carpetaCovers = new File("covers/");
+    		if(!carpetaCovers.exists()) {
+    			carpetaCovers.mkdirs();
+    		}
+    		
+    		File archivoDestino = new File(carpetaCovers, nuevoNombreArchivo);
+    		
+    		if(!archivoOrigen.getAbsolutePath().equals(archivoDestino.getAbsolutePath())) {
+    			Files.copy(archivoOrigen.toPath(), archivoDestino.toPath(), StandardCopyOption.REPLACE_EXISTING);
+    		}
+    		return archivoDestino.getPath();
+    				
+    		
+    	}catch(IOException e) {
+    		e.printStackTrace();
+    		return rutaOrigen; 
+    	}
+		
+    	
+    }
+    
+    
 }
 
 // =========================================================================
@@ -286,6 +343,28 @@ class GestorUsuarios {
                 .findFirst()
                 .orElse(null);
     }
+    
+    public boolean registrarNuevoUsuario(Usuario nuevoUsuario) {
+    	for(Usuario u : usuariosRegistrados) {
+    		if(u.getMatricula().equals(nuevoUsuario.getMatricula())) {
+    			return false;
+    		}
+    	}
+    	usuariosRegistrados.add(nuevoUsuario);
+    	guardarUsuarios();
+    	return true;
+    }
+    
+    public Usuario buscarPorMatricula(String matricula) {
+    	for(Usuario u : usuariosRegistrados) {
+    		if(u.getMatricula().equals(matricula)) {
+    			return u;
+    		}
+    	}
+    	return null;
+    }
+    
+    
 }
 
 // =========================================================================
@@ -320,6 +399,40 @@ class GestorBiblioteca {
     public ArrayList<Libro> obtenerLibros() { 
         return inventario; 
     }
+    
+    //Devuelve una lista con los libros que coinciden con el nombre buscado
+    public ArrayList<Libro> buscarLibrosPorTitulo(String termino){
+    	String terminoMin = termino.toLowerCase();
+    	ArrayList<Libro> resultados = new ArrayList<>();
+    	
+    	for(Libro l : inventario) {
+    		if(l.getTitulo().toLowerCase().contains(terminoMin)) {
+    			resultados.add(l);
+    		}
+    	}
+    	return resultados;
+    }
+    
+    //Devuelve una lista con todas las categorias que se han guardado
+    public ArrayList<String> obtenerCategoriasUnicas(){
+    	ArrayList<String> categorias = new ArrayList<>();
+    	
+    	for(Libro libro : inventario) {
+    		for(String cat : libro.getCategorias()) {
+    			if(!categorias.contains(cat) && !cat.isEmpty()) {
+    				categorias.add(cat);
+    			}
+    		}
+    	}
+    	return categorias; 
+    }
+    
+    public void registrarLibro(Libro libro) {
+    	inventario.add(libro);
+    	actualizarLibro();
+    }
+    
+    
 
     // Filtra la lista por categoría (o devuelve toda si es "Todas")
     public ArrayList<Libro> filtrarPorCategoria(String cat) {
@@ -363,6 +476,7 @@ class Libro implements Serializable {
     private ArrayList<String> categorias;
     private int paginas;
     private boolean disponible = true;
+    private ArrayList<String> usuariosQueGuardaron;
 
     public Libro(String id, String t, ArrayList<String> c, String r, String a, int p, String s) {
         this.idLibro = id; 
@@ -372,6 +486,8 @@ class Libro implements Serializable {
         this.autor = a; 
         this.paginas = p; 
         this.sinopsis = s;
+        this.usuariosQueGuardaron = new ArrayList<>();
+        
     }
 
     // Getters y Setters necesarios
@@ -382,6 +498,17 @@ class Libro implements Serializable {
     public void setDisponible(boolean d) { this.disponible = d; }
     public String getMatriculaPrestamo() { return matriculaPrestamo; }
     public void setMatriculaPrestamo(String m) { this.matriculaPrestamo = m; }
+    public boolean estaGuardado(String matricula) { return usuariosQueGuardaron.contains(matricula); }
+    
+    public void toggleGuardado(String matricula) { 
+    	if(estaGuardado(matricula)) {
+    		usuariosQueGuardaron.remove(matricula);
+    	}else {
+    		usuariosQueGuardaron.add(matricula);
+    	}
+    }
+    
+    
 }
 
 abstract class Usuario implements Serializable {
