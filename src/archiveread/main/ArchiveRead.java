@@ -1,4 +1,4 @@
-// Archive Read - Version 1.0.0
+// Archive Read - Version 1.3.0
 // ================================
 // Laura Alvarez y Jesus Eugenio
 // ================================
@@ -23,7 +23,7 @@ import javax.swing.border.LineBorder;
 public class ArchiveRead extends JFrame {
     // Paneles principales
     private JPanel panelPrincipal;
-    private JPanel panelLibrosGrid;
+    private JPanel panelContenidoCentro; //Controla el intercambio entre vistas
     private JPanel panelHeader;
     
     // Gestores de datos
@@ -108,16 +108,36 @@ public class ArchiveRead extends JFrame {
         // ---------------------------------------------------------
         // CONSTRUCCIÓN DE LA CUADRÍCULA CENTRAL (GRID)
         // ---------------------------------------------------------
-        panelLibrosGrid = new JPanel(new GridLayout(0, 5, 20, 20)); // 5 columnas, filas dinámicas (0)
-        panelLibrosGrid.setBorder(new EmptyBorder(20, 20, 20, 20));
+        panelContenidoCentro = new JPanel(new GridLayout(0, 5, 20, 20)); // 5 columnas, filas dinámicas (0)
+        panelContenidoCentro.setBorder(new EmptyBorder(20, 20, 20, 20));
         
         // Agregamos scroll por si hay muchos libros
-        JScrollPane scrollPane = new JScrollPane(panelLibrosGrid);
+        JScrollPane scrollPane = new JScrollPane(panelContenidoCentro);
         scrollPane.setBorder(null);
         panelPrincipal.add(scrollPane, BorderLayout.CENTER);
 
         // Carga inicial de todos los libros
         actualizarPantalla(gestorBiblioteca.obtenerLibros());
+        
+    }
+    
+    // =========================================================================
+    // NAVEGACION Y CAMBIO DE VISTAS
+    // ========================================================================
+    
+    private void cambiarVista(JPanel nuevoPanel) {
+    	// Si ya hay un panel en el centro, lo quitamos de la pantalla principal
+    	if(panelContenidoCentro != null) {
+    		panelPrincipal.remove(panelContenidoCentro);
+    	}
+    	
+    	// Asignamos un nuevo panel y lo agregamos en el centro del Layout
+    	panelContenidoCentro = nuevoPanel;
+    	panelPrincipal.add(panelContenidoCentro, BorderLayout.CENTER);
+    	
+    	// Forzamos que se vuelva a redibujar la interfaz
+    	panelPrincipal.revalidate();
+    	panelPrincipal.repaint();
     }
 
     // =========================================================================
@@ -177,7 +197,7 @@ public class ArchiveRead extends JFrame {
     
     // Dibuja las tarjetas de los libros enviados por parámetro
     private void actualizarPantalla(ArrayList<Libro> librosMostrados) {
-        panelLibrosGrid.removeAll(); // Limpia la pantalla
+    	panelContenidoCentro.removeAll(); // Limpia la pantalla
         
         for (Libro l : librosMostrados) {
             JPanel card = new JPanel(new BorderLayout());
@@ -216,12 +236,12 @@ public class ArchiveRead extends JFrame {
 
             card.add(lblImg, BorderLayout.CENTER);
             card.add(pnlInfo, BorderLayout.SOUTH);
-            panelLibrosGrid.add(card);
+            panelContenidoCentro.add(card);
         }
         
         // Refresca la ventana para aplicar los cambios visuales
-        panelLibrosGrid.revalidate();
-        panelLibrosGrid.repaint();
+        panelContenidoCentro.revalidate();
+        panelContenidoCentro.repaint();
     }
 
     private void rentarLibro(Libro libro) {
@@ -746,7 +766,6 @@ class Lector extends Usuario {
     } 
 }
 
-//;D....
 
 class Administrador extends Usuario { 
     public Administrador(String m, String p, String n) { 
