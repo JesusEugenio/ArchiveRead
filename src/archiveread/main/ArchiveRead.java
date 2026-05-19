@@ -181,7 +181,7 @@ public class ArchiveRead extends JFrame {
     }
 
     // =========================================================================
-    // RENDERIZADO DE LA PANTALLA 
+    // RENDERIZADO DE LAS VISTAS DE LA PANTALLA 
     // =========================================================================
     
     private void mostrarCatalogo(ArrayList<Libro> librosMostrados) {
