@@ -81,7 +81,7 @@ public class ArchiveRead extends JFrame {
         btnFiltrar.addActionListener(e -> {
             // Filtra y actualiza la cuadrícula de inmediato
             String categoria = comboCategorias.getSelectedItem().toString();
-            actualizarPantalla(gestorBiblioteca.filtrarPorCategoria(categoria));
+            mostrarCatalogo(gestorBiblioteca.filtrarPorCategoria(categoria));
         });
         pnlFiltros.add(btnFiltrar);
 
@@ -105,19 +105,8 @@ public class ArchiveRead extends JFrame {
         panelHeader.add(pnlUsuario, BorderLayout.EAST);
         panelPrincipal.add(panelHeader, BorderLayout.NORTH);
 
-        // ---------------------------------------------------------
-        // CONSTRUCCIÓN DE LA CUADRÍCULA CENTRAL (GRID)
-        // ---------------------------------------------------------
-        panelContenidoCentro = new JPanel(new GridLayout(0, 5, 20, 20)); // 5 columnas, filas dinámicas (0)
-        panelContenidoCentro.setBorder(new EmptyBorder(20, 20, 20, 20));
-        
-        // Agregamos scroll por si hay muchos libros
-        JScrollPane scrollPane = new JScrollPane(panelContenidoCentro);
-        scrollPane.setBorder(null);
-        panelPrincipal.add(scrollPane, BorderLayout.CENTER);
-
         // Carga inicial de todos los libros
-        actualizarPantalla(gestorBiblioteca.obtenerLibros());
+        mostrarCatalogo(gestorBiblioteca.obtenerLibros());
         
     }
     
@@ -172,7 +161,7 @@ public class ArchiveRead extends JFrame {
                 dialogLogin.dispose();
                 
                 // Recargamos pantalla para habilitar botones de devolver/rentar
-                actualizarPantalla(gestorBiblioteca.obtenerLibros());
+                mostrarCatalogo(gestorBiblioteca.obtenerLibros());
             } else {
                 JOptionPane.showMessageDialog(dialogLogin, "Credenciales incorrectas");
             }
@@ -188,17 +177,18 @@ public class ArchiveRead extends JFrame {
         usuarioActual = null;
         lblStatusUsuario.setText(""); 
         btnLoginHeader.setText("Iniciar Sesión");
-        actualizarPantalla(gestorBiblioteca.obtenerLibros());
+        mostrarCatalogo(gestorBiblioteca.obtenerLibros());
     }
 
     // =========================================================================
-    // MÉTODOS DE RENDERIZADO Y LÓGICA DE NEGOCIO
+    // RENDERIZADO DE LA PANTALLA 
     // =========================================================================
     
-    // Dibuja las tarjetas de los libros enviados por parámetro
-    private void actualizarPantalla(ArrayList<Libro> librosMostrados) {
-    	panelContenidoCentro.removeAll(); // Limpia la pantalla
-        
+    private void mostrarCatalogo(ArrayList<Libro> librosMostrados) {
+    	
+    	JPanel panelGridTemporal = new JPanel(new GridLayout(0,5,20,20));
+    	panelGridTemporal.setBorder(new EmptyBorder(20, 20, 20, 20));
+    	
         for (Libro l : librosMostrados) {
             JPanel card = new JPanel(new BorderLayout());
             card.setBorder(new LineBorder(Color.LIGHT_GRAY));
@@ -236,12 +226,17 @@ public class ArchiveRead extends JFrame {
 
             card.add(lblImg, BorderLayout.CENTER);
             card.add(pnlInfo, BorderLayout.SOUTH);
-            panelContenidoCentro.add(card);
+            panelGridTemporal.add(card);
         }
         
-        // Refresca la ventana para aplicar los cambios visuales
-        panelContenidoCentro.revalidate();
-        panelContenidoCentro.repaint();
+        // Envolvemos en un ScrollPane
+        JScrollPane scrollPane = new JScrollPane(panelGridTemporal);
+        scrollPane.setBorder(null);
+       
+        // Empacamos en un panel base para la navegacion entre ventanas
+        JPanel panelBase = new JPanel(new BorderLayout());
+        panelBase.add(scrollPane, BorderLayout.CENTER);
+        cambiarVista(panelBase);
     }
 
     private void rentarLibro(Libro libro) {
@@ -251,7 +246,7 @@ public class ArchiveRead extends JFrame {
             libro.setDisponible(false);
             libro.setMatriculaPrestamo(usuarioActual.getMatricula());
             gestorBiblioteca.actualizarLibro(); // Guarda en binario
-            actualizarPantalla(gestorBiblioteca.obtenerLibros()); // Refresca UI
+            mostrarCatalogo(gestorBiblioteca.obtenerLibros()); // Refresca UI
         }
     }
 
@@ -259,7 +254,7 @@ public class ArchiveRead extends JFrame {
         libro.setDisponible(true);
         libro.setMatriculaPrestamo(null);
         gestorBiblioteca.actualizarLibro(); // Guarda en binario
-        actualizarPantalla(gestorBiblioteca.obtenerLibros()); // Refresca UI
+        mostrarCatalogo(gestorBiblioteca.obtenerLibros()); // Refresca UI
     }
     
     
