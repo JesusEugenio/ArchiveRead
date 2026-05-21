@@ -37,6 +37,13 @@ public class ArchiveRead extends JFrame {
     private final Color COLOR_PRIMARIO = new Color(130, 49, 90);	// Magenta
     private final Color COLOR_FONDO = new Color(250, 250, 250);		// Blanco 
     
+    // Enlazar el cargador de fuentes con el texto de la UI
+    private JLabel crearLabel(String texto, Font fuente, float size, Color color) {
+    	JLabel lbl = new JLabel(texto);
+    	lbl.setFont(CargarFuente.get(fuente, size));
+    	return lbl;
+    }
+    
     // Elementos del Header 
     private JLabel lblStatusUsuario; 
     private JButton btnLoginHeader;
@@ -73,15 +80,17 @@ public class ArchiveRead extends JFrame {
         
         JPanel pnlFiltros = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 10));
         JLabel lblLogo = new JLabel("ArchiveRead");
-        lblLogo.setFont(new Font("Tahoma", Font.BOLD, 18));
+        lblLogo.setFont(CargarFuente.get(CargarFuente.BOLD, 20f));
         pnlFiltros.add(lblLogo);
 
         JComboBox<String> comboCategorias = new JComboBox<>(new String[]{
             "Todas", "Programación", "Sistemas", "Fantasía", "Redes"
         });
+        comboCategorias.setFont(CargarFuente.get(CargarFuente.REGULAR, 14f));
         pnlFiltros.add(comboCategorias);
 
         JButton btnFiltrar = new JButton("Filtrar");
+        btnFiltrar.setFont(CargarFuente.get(CargarFuente.BOLD, 14f));
         btnFiltrar.addActionListener(e -> {
             // Filtra y actualiza la cuadrícula de inmediato
             String categoria = comboCategorias.getSelectedItem().toString();
@@ -94,6 +103,7 @@ public class ArchiveRead extends JFrame {
         lblStatusUsuario = new JLabel(""); // Vacío por defecto (modo invitado)
         
         btnLoginHeader = new JButton("Iniciar Sesión");
+        btnLoginHeader.setFont(CargarFuente.get(CargarFuente.BOLD, 14f));
         btnLoginHeader.addActionListener(e -> {
             if (usuarioActual == null) {
                 abrirDialogoLogin();
@@ -192,7 +202,7 @@ public class ArchiveRead extends JFrame {
     	
     	JPanel panelGridTemporal = new JPanel(new GridLayout(0,5,20,20));
     	panelGridTemporal.setBorder(new EmptyBorder(20, 20, 20, 20));
-    	
+    	    	
         for (Libro l : librosMostrados) {
             JPanel card = new JPanel(new BorderLayout());
             card.setBorder(new LineBorder(Color.LIGHT_GRAY));
@@ -201,9 +211,22 @@ public class ArchiveRead extends JFrame {
             ImageIcon icon = new ImageIcon(l.getRutaImagen());
             Image img = icon.getImage().getScaledInstance(140, 190, Image.SCALE_SMOOTH);
             JLabel lblImg = new JLabel(new ImageIcon(img));
+            lblImg.setCursor(new Cursor(Cursor.HAND_CURSOR));
             
             JPanel pnlInfo = new JPanel(new GridLayout(2, 1));
             JLabel lblT = new JLabel(l.getTitulo(), SwingConstants.CENTER);
+            lblT.setFont(CargarFuente.get(CargarFuente.BOLD, 14f));
+            lblT.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            
+            // Registrar los eventos del mouse
+            java.awt.event.MouseAdapter eventoClicLibro = new java.awt.event.MouseAdapter() {
+            	@Override
+            	public void mouseClicked(java.awt.event.MouseEvent e) {
+            		mostrarDetalleLibro(l);
+            	}
+            };
+            lblImg.addMouseListener(eventoClicLibro);
+            lblT.addMouseListener(eventoClicLibro);
             
             // Botón Dinámico según el estado del libro
             JButton btnAccion = new JButton();
@@ -242,7 +265,302 @@ public class ArchiveRead extends JFrame {
         panelBase.add(scrollPane, BorderLayout.CENTER);
         cambiarVista(panelBase);
     }
+    
+    public void mostrarDetalleLibro(Libro libro) {
+    	cambiarVista(crearPanelDetalle(libro));
+ 
+    }
+    
+    private JPanel crearPanelDetalle(Libro libro) { 	
+    	JPanel panelBase = new JPanel(new BorderLayout());
+    	panelBase.setBackground(COLOR_FONDO);
+    	
+    	// ================================================
+    	// Barra de navegacion superior 
+    	// ================================================
+    	JPanel pnlRuta = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 10));
+    	pnlRuta.setBackground(COLOR_FONDO);
+    	pnlRuta.setBorder(new EmptyBorder(5, 40, 0, 0));
+    	
+    	String catsUnidas = String.join(", ", libro.getCategorias());
+    	pnlRuta.add(crearLabel("ArchiveRead  >" + catsUnidas + "  > ", CargarFuente.REGULAR, 14f, Color.GRAY));
+    	
+    	// Boton para volver al menu principal
+    	JLabel lblAtras = crearLabel("Volver al Catalogo", CargarFuente.REGULAR, 14f, COLOR_PRIMARIO);
+    	lblAtras.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    	
+    	// Registro de evento lblAtras
+    	lblAtras.addMouseListener(new java.awt.event.MouseAdapter() {
+        	@Override
+        	public void mouseClicked(java.awt.event.MouseEvent e) {
+        		// Volvemos a cargar el catalogo de libros
+        		mostrarCatalogo(gestorBiblioteca.obtenerLibros());
+        	}
+        });
+    	pnlRuta.add(lblAtras);
+    	panelBase.add(pnlRuta, BorderLayout.NORTH);
+    	
+    	
+    	// ================================================================
+    	// ===  Panel que agrupa todo el banner e informacion del libro ===
+    	// ================================================================
+    	JPanel pnlContenidoCentral = new JPanel(new BorderLayout());
+        pnlContenidoCentral.setBackground(COLOR_FONDO);
+    	
+    	// Panel del banner del libro
+    	JPanel pnlBannerOscuro = new JPanel(new BorderLayout(30,0));
+    	pnlBannerOscuro.setBackground(new Color(10, 10, 10));
+    	pnlBannerOscuro.setBorder(new EmptyBorder(40, 40, 40, 40));
 
+    	// Cargar Portada
+    	ImageIcon iconoPortada = new ImageIcon(libro.getRutaImagen());
+    	Image imgEscalada = iconoPortada.getImage().getScaledInstance(180, 260, Image.SCALE_SMOOTH);
+    	JLabel lblImagen = new JLabel(new ImageIcon(imgEscalada));
+    	lblImagen.setVerticalAlignment(SwingConstants.TOP);
+    	pnlBannerOscuro.add(lblImagen, BorderLayout.WEST);
+    	
+    	// Instancia para poner titulo y categorias
+    	JPanel pnlInfoBanner = new JPanel();
+    	pnlInfoBanner.setLayout(new BoxLayout(pnlInfoBanner, BoxLayout.Y_AXIS));
+    	pnlInfoBanner.setOpaque(false);
+    	
+    	// Titulo
+    	JLabel lblTitulo = crearLabel(libro.getTitulo(), CargarFuente.BOLD, 32f, Color.WHITE);
+    	lblTitulo.setAlignmentX(Component.LEFT_ALIGNMENT);
+    	lblTitulo.setBorder(new EmptyBorder(15, 0, 10, 0));
+    	
+    	// Evaluar disponibilidad
+    	String textoDisponibilidad = libro.isDisponible() ? "Disponible" : "Ocupado";
+    	JLabel lblStats = crearLabel(" " + libro.getPaginas() + " Paginas   |   " + textoDisponibilidad, CargarFuente.REGULAR, 14f, new Color(200, 200, 200));
+    	lblStats.setAlignmentX(Component.LEFT_ALIGNMENT);
+    	lblTitulo.setBorder(new EmptyBorder(0, 0, 35, 0));
+    	
+    	// Panel para botones rentar y añadir a biblioteca
+    	JPanel pnlBotones = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+    	pnlBotones.setOpaque(false);
+    	pnlBotones.setAlignmentX(Component.LEFT_ALIGNMENT);
+    	
+    	// Boton de Rentar / Prestado
+    	JButton btnRentar = new JButton();
+    	btnRentar.setFont(CargarFuente.get(CargarFuente.BOLD, 13f));
+    	btnRentar.setPreferredSize(new Dimension(150, 50));
+    	btnRentar.setFont(CargarFuente.get(CargarFuente.BOLD, 14f));
+    	btnRentar.setFocusPainted(false);
+    	btnRentar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    	
+    	if (libro.isDisponible()) {
+            btnRentar.setText("Rentar");
+            btnRentar.setBackground(COLOR_PRIMARIO);
+            btnRentar.setForeground(Color.WHITE);
+            btnRentar.addActionListener(e -> { rentarLibro(libro); mostrarDetalleLibro(libro); });
+            
+        } else if (usuarioActual != null && usuarioActual.getMatricula().equals(libro.getMatriculaPrestamo())) {
+            btnRentar.setText("Devolver");
+            btnRentar.setBackground(Color.DARK_GRAY);
+            btnRentar.setForeground(Color.WHITE);
+            btnRentar.addActionListener(e -> { devolverLibro(libro); mostrarDetalleLibro(libro); });
+            
+        } else {
+            btnRentar.setText("Prestado");
+            btnRentar.setBackground(new Color(60, 60, 60));
+            btnRentar.setForeground(Color.LIGHT_GRAY);
+            btnRentar.setEnabled(false);
+        }
+
+        // Botón de Añadir a Biblioteca / Guardado 
+        boolean estaGuardado = (usuarioActual != null) && libro.estaGuardado(usuarioActual.getMatricula());
+        JButton btnGuardar = new JButton(estaGuardado ? "En Biblioteca" : "Añadir a Biblioteca");
+        btnGuardar.setPreferredSize(new Dimension(200, 40));
+        btnGuardar.setFont(CargarFuente.get(CargarFuente.BOLD, 14f));
+        btnGuardar.setFocusPainted(false);
+        btnGuardar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnGuardar.setBackground(estaGuardado ? Color.WHITE : new Color(30, 35, 40));
+        btnGuardar.setForeground(estaGuardado ? COLOR_PRIMARIO : Color.WHITE);
+        btnGuardar.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
+        btnGuardar.addActionListener(e -> {
+            if (usuarioActual == null) {
+                abrirDialogoLogin();
+            } else {
+                libro.toggleGuardado(usuarioActual.getMatricula());
+                gestorBiblioteca.actualizarLibro();
+                mostrarDetalleLibro(libro);
+            }
+        });
+        
+        
+        // Agregar los botones al panel 
+        pnlBotones.add(btnRentar);
+        pnlBotones.add(Box.createHorizontalStrut(15));
+        pnlBotones.add(btnGuardar);
+        
+        // Agregar detalles del libro al panel 
+        pnlInfoBanner.add(lblTitulo);
+        pnlInfoBanner.add(lblStats);
+        pnlInfoBanner.add(Box.createVerticalGlue()); 
+        pnlInfoBanner.add(pnlBotones);
+        pnlBannerOscuro.add(pnlInfoBanner, BorderLayout.CENTER);
+        pnlContenidoCentral.add(pnlBannerOscuro, BorderLayout.NORTH);
+        
+        
+        // ================================================
+        // === Seccion para agregar Sinopsis y Reviews ====
+        // ================================================
+        JPanel pnlInferior = new JPanel(new BorderLayout());
+        pnlInferior.setBackground(COLOR_FONDO);
+        pnlInferior.setBorder(new EmptyBorder(30, 40, 40, 40));
+        
+        // Dividimos sinopsis y reviews en dos pestañas con el card layout
+        JPanel pnlIzquierda = new JPanel(new BorderLayout());
+        pnlIzquierda.setBackground(COLOR_FONDO);
+        
+        JPanel pnlTabs = new JPanel(new FlowLayout(FlowLayout.LEFT, 30, 0));
+        pnlTabs.setBackground(COLOR_FONDO);
+        pnlTabs.setBorder(new EmptyBorder(0, 0, 15, 0));
+        
+        JLabel lblTabSinopsis = crearLabel("Sinopsis" , CargarFuente.BOLD, 18f, Color.BLACK);
+        lblTabSinopsis.setBorder(BorderFactory.createMatteBorder(0, 0, 4 ,0 , COLOR_PRIMARIO));
+        lblTabSinopsis.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        
+        JLabel lblTabReviews = crearLabel("Reviews" , CargarFuente.BOLD, 18f, Color.GRAY);
+        lblTabReviews.setBorder(BorderFactory.createEmptyBorder(0, 0, 4, 0));
+        lblTabReviews.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        
+        pnlTabs.add(lblTabSinopsis);
+        pnlTabs.add(lblTabReviews);
+        
+        JPanel pnlCards = new JPanel(new CardLayout());
+        pnlCards.setBackground(COLOR_FONDO);
+        
+        
+        // Pestaña 1: Sinopsis 
+        JPanel cardSinopsis = new JPanel(new BorderLayout(0, 10));
+        cardSinopsis.setBackground(COLOR_FONDO);
+        JTextArea txtSinopsis = new JTextArea(libro.getSinopsis());
+        txtSinopsis.setWrapStyleWord(true); // Ajuste automatico de palabras
+        txtSinopsis.setLineWrap(true);	
+        txtSinopsis.setEditable(false);		// Desactiva la edicion del texto
+        txtSinopsis.setOpaque(false); 		// Texto sin opacidad
+        txtSinopsis.setFont(CargarFuente.get(CargarFuente.REGULAR, 15f));
+        txtSinopsis.setForeground(new Color(50, 50, 50)); // Texto gris oscuro
+        cardSinopsis.add(txtSinopsis, BorderLayout.NORTH);
+        
+        // Pestaña 2: Reviews 
+        JPanel cardReviews = new JPanel(new BorderLayout(0, 10));
+        cardReviews.setBackground(COLOR_FONDO);
+        JPanel listaReviews = new JPanel();
+        listaReviews.setLayout(new BoxLayout(listaReviews, BoxLayout.Y_AXIS));
+        listaReviews.setBackground(COLOR_FONDO);
+        
+        // Cargar reviews desde archivo de texto
+        cargarReviews(libro, listaReviews);
+        
+        // Envolver las Reviews en un Scroll en caso de ser muchas
+        JScrollPane scrollReviews = new JScrollPane(listaReviews);
+        scrollReviews.setBorder(null);
+        scrollReviews.getViewport().setBackground(COLOR_FONDO);
+        cardReviews.add(scrollReviews, BorderLayout.CENTER);
+
+        pnlCards.add(cardSinopsis, "SINOPSIS");
+        pnlCards.add(cardReviews, "REVIEWS");
+        pnlIzquierda.add(pnlCards, BorderLayout.CENTER);
+        
+        // Para poder cambiar entre pestañas
+        CardLayout cl = (CardLayout) pnlCards.getLayout();
+        
+        // Al presionar en el texto de sinopsis
+        lblTabSinopsis.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override public void mouseClicked(java.awt.event.MouseEvent e) {
+                cl.show(pnlCards, "SINOPSIS");
+                lblTabSinopsis.setForeground(Color.BLACK);
+                lblTabSinopsis.setBorder(BorderFactory.createMatteBorder(0, 0, 4, 0, COLOR_PRIMARIO));
+                lblTabReviews.setForeground(Color.GRAY);
+                lblTabReviews.setBorder(BorderFactory.createEmptyBorder(0, 0, 4, 0));
+            }
+        });
+        
+        
+        // Al presionar el texto de Reviews
+        lblTabReviews.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override public void mouseClicked(java.awt.event.MouseEvent e) {
+                cl.show(pnlCards, "REVIEWS");
+                lblTabReviews.setForeground(Color.BLACK);
+                lblTabReviews.setBorder(BorderFactory.createMatteBorder(0, 0, 4, 0, COLOR_PRIMARIO));
+                lblTabSinopsis.setForeground(Color.GRAY);
+                lblTabSinopsis.setBorder(BorderFactory.createEmptyBorder(0, 0, 4, 0));
+            }
+        });
+        pnlInferior.add(pnlIzquierda, BorderLayout.CENTER);
+        
+        
+        // ================================================
+        // Ficha Tecnica del libro y autor
+        // ================================================
+        JPanel pnlDerecha = new JPanel();
+        pnlDerecha.setLayout(new BoxLayout(pnlDerecha, BoxLayout.Y_AXIS));
+        pnlDerecha.setBackground(COLOR_FONDO);
+        pnlDerecha.setPreferredSize(new Dimension(320, 400));
+        
+        // Encabezado del autor
+        JLabel lblAutorTitulo = crearLabel("Autor", CargarFuente.BOLD, 18f, Color.BLACK);
+        lblAutorTitulo.setAlignmentX(Component.LEFT_ALIGNMENT); // Que se alinee en la izquierda
+        lblAutorTitulo.setBorder(new EmptyBorder(0, 0, 10, 0));
+        JPanel pnlCajaAutor = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 15));
+        pnlCajaAutor.setBackground(new Color(240, 240, 240));
+        pnlCajaAutor.setBorder(new LineBorder(new Color(220, 220, 220), 1, true));
+        pnlCajaAutor.setAlignmentX(Component.LEFT_ALIGNMENT);
+        pnlCajaAutor.setMaximumSize(new Dimension(320, 69));
+        pnlCajaAutor.add(crearLabel(libro.getAutor(), CargarFuente.BOLD, 14f, Color.BLACK));
+        
+        // Seccion "Acerca de este libro"
+        JLabel lblAcercaTitulo = crearLabel("Acerca de este libro", CargarFuente.BOLD, 18f, Color.BLACK);
+        lblAcercaTitulo.setAlignmentX(Component.LEFT_ALIGNMENT);
+        lblAcercaTitulo.setBorder(new EmptyBorder(30, 0, 10, 0));
+        
+        // Crear la tabla donde esta la ficha tecnica 
+        JPanel pnlFichaInfo = new JPanel(new GridLayout(3, 2, 10, 15));
+        pnlFichaInfo.setBackground(Color.WHITE);
+        
+        // Añadir un borde grisaceo a la tabla
+        pnlFichaInfo.setBorder(BorderFactory.createCompoundBorder(new LineBorder(new Color(220, 220, 220), 1, true), new EmptyBorder(15, 15, 15, 15)));
+        pnlFichaInfo.setAlignmentX(Component.LEFT_ALIGNMENT);
+        pnlFichaInfo.setMaximumSize(new Dimension(320, 140));
+        
+        // Asignar contenido a la tabla
+        pnlFichaInfo.add(crearLabel("Estado:", CargarFuente.REGULAR, 13f, Color.GRAY));
+        String txtEstadoFicha = libro.isDisponible() ? "Disponible" : "En prestamo";
+        Color colEstadoFicha = libro.isDisponible() ? new Color(39, 174, 96) : Color.RED;
+        pnlFichaInfo.add(crearLabel(txtEstadoFicha, CargarFuente.BOLD, 13f, colEstadoFicha));
+        
+        pnlFichaInfo.add(crearLabel("Paginas:", CargarFuente.REGULAR, 13f, Color.GRAY));
+        pnlFichaInfo.add(crearLabel(String.valueOf(libro.getPaginas()), CargarFuente.REGULAR, 13f, Color.BLACK));
+        
+        pnlFichaInfo.add(crearLabel("Categorias:", CargarFuente.REGULAR, 13f, Color.GRAY));
+        pnlFichaInfo.add(crearLabel(libro.getCategoria(), CargarFuente.REGULAR, 13f, Color.BLACK));
+        
+        pnlDerecha.add(lblAutorTitulo);
+        pnlDerecha.add(pnlCajaAutor);
+        pnlDerecha.add(pnlFichaInfo);
+        pnlInferior.add(pnlDerecha, BorderLayout.EAST);
+        
+        // Agrupar los panels verticales
+        JPanel pnlAgrupadorVertical = new JPanel(new BorderLayout());
+        pnlAgrupadorVertical.setBackground(COLOR_FONDO);
+        pnlAgrupadorVertical.add(pnlInferior, BorderLayout.CENTER);
+        pnlContenidoCentral.add(pnlAgrupadorVertical, BorderLayout.CENTER);
+        
+        // Envolvemos el contenido en un scroll
+        JScrollPane scrollGeneralDetalles = new JScrollPane(pnlContenidoCentral);
+        scrollGeneralDetalles.setBorder(null);
+        scrollGeneralDetalles.getVerticalScrollBar().setUnitIncrement(16); // Velocidad de avance de 16 pixeles con el mouse
+        scrollGeneralDetalles.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); // Apagar scroll horizontal
+        scrollGeneralDetalles.getViewport().setBackground(COLOR_FONDO);
+        panelBase.add(scrollGeneralDetalles, BorderLayout.CENTER);
+        
+        // Devolvemos la vista creada
+        return panelBase;
+    
+    }
+    
     private void rentarLibro(Libro libro) {
         if (usuarioActual == null) {
             abrirDialogoLogin();
@@ -712,17 +1030,16 @@ class Libro implements Serializable {
         this.usuariosQueGuardaron = new ArrayList<>();
         
     }
-
-    // Getters y Setters necesarios
+    
+    // Getters 
     public String getTitulo() { return titulo; }
     public String getAutor() { return autor; }
+    public int getPaginas() { return paginas; }
+    public String getSinopsis() { return sinopsis; }
     public String getRutaImagen() { return rutaImagen; }
     public ArrayList<String> getCategorias() { return categorias; }
     public boolean isDisponible() { return disponible; }
-    public void setDisponible(boolean d) { this.disponible = d; }
     public String getMatriculaPrestamo() { return matriculaPrestamo; }
-    public void setMatriculaPrestamo(String m) { this.matriculaPrestamo = m; }
-    
     public String getCategoria() {
     	if(categorias != null && !categorias.isEmpty()) {
     		return categorias.get(0);
@@ -730,17 +1047,18 @@ class Libro implements Serializable {
     		return "General";
     	}
     }
-
     public boolean estaGuardado(String matricula) { return usuariosQueGuardaron.contains(matricula); }
     
+    // Setters
+    public void setDisponible(boolean d) { this.disponible = d; }
+    public void setMatriculaPrestamo(String m) { this.matriculaPrestamo = m; }
     public void toggleGuardado(String matricula) { 
     	if(estaGuardado(matricula)) {
     		usuariosQueGuardaron.remove(matricula);
-    	}else {
+    	} else {
     		usuariosQueGuardaron.add(matricula);
     	}
     }
-    
     
 }
 
