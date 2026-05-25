@@ -1,4 +1,4 @@
-// Archive Read - Version 1.4.0
+// Archive Read - Version 1.5.0
 // ================================
 // Laura Alvarez y Jesus Eugenio
 // ================================
@@ -6,6 +6,7 @@ package archiveread.main;
 
 import java.awt.*;
 import java.io.*;
+import java.awt.event.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.text.Normalizer;
@@ -67,60 +68,16 @@ public class ArchiveRead extends JFrame {
         // Configuración de la ventana
         setTitle("ArchiveRead");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setMinimumSize(new Dimension(800, 600));
         setExtendedState(JFrame.MAXIMIZED_BOTH); // Inicia maximizada
 
         panelPrincipal = new JPanel(new BorderLayout());
+        panelPrincipal.setBackground(COLOR_FONDO);
         setContentPane(panelPrincipal);
-
-        // ---------------------------------------------------------
-        // CONSTRUCCIÓN DEL ENCABEZADO (HEADER)
-        // ---------------------------------------------------------
-        panelHeader = new JPanel(new BorderLayout());
-        panelHeader.setBorder(new LineBorder(Color.LIGHT_GRAY));
         
-        JPanel pnlFiltros = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 10));
-        JLabel lblLogo = new JLabel("ArchiveRead");
-        lblLogo.setFont(CargarFuente.get(CargarFuente.BOLD, 20f));
-        pnlFiltros.add(lblLogo);
-
-        JComboBox<String> comboCategorias = new JComboBox<>(new String[]{
-            "Todas", "Programación", "Sistemas", "Fantasía", "Redes"
-        });
-        comboCategorias.setFont(CargarFuente.get(CargarFuente.REGULAR, 14f));
-        pnlFiltros.add(comboCategorias);
-
-        JButton btnFiltrar = new JButton("Filtrar");
-        btnFiltrar.setFont(CargarFuente.get(CargarFuente.BOLD, 14f));
-        btnFiltrar.addActionListener(e -> {
-            // Filtra y actualiza la cuadrícula de inmediato
-            String categoria = comboCategorias.getSelectedItem().toString();
-            mostrarCatalogo(gestorBiblioteca.filtrarPorCategoria(categoria));
-        });
-        pnlFiltros.add(btnFiltrar);
-
-        // --- Lado Derecho (Usuario y Login) ---
-        JPanel pnlUsuario = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 10));
-        lblStatusUsuario = new JLabel(""); // Vacío por defecto (modo invitado)
-        
-        btnLoginHeader = new JButton("Iniciar Sesión");
-        btnLoginHeader.setFont(CargarFuente.get(CargarFuente.BOLD, 14f));
-        btnLoginHeader.addActionListener(e -> {
-            if (usuarioActual == null) {
-                abrirDialogoLogin();
-            } else {
-                cerrarSesion();
-            }
-        });
-
-        pnlUsuario.add(lblStatusUsuario);
-        pnlUsuario.add(btnLoginHeader);
-
-        panelHeader.add(pnlFiltros, BorderLayout.WEST);
-        panelHeader.add(pnlUsuario, BorderLayout.EAST);
-        panelPrincipal.add(panelHeader, BorderLayout.NORTH);
-
-        // Carga inicial de todos los libros
-        mostrarCatalogo(gestorBiblioteca.obtenerLibros());
+        panelContenidoCentro = new JPanel(new BorderLayout());
+        panelContenidoCentro.setBackground(COLOR_FONDO);
+        panelPrincipal.add(panelContenidoCentro, BorderLayout.CENTER);
         
     }
     
@@ -141,6 +98,7 @@ public class ArchiveRead extends JFrame {
     	// Forzamos que se vuelva a redibujar la interfaz
     	panelPrincipal.revalidate();
     	panelPrincipal.repaint();
+    	
     }
 
     // =========================================================================
@@ -198,73 +156,94 @@ public class ArchiveRead extends JFrame {
     // RENDERIZADO DE LAS VISTAS DE LA PANTALLA 
     // =========================================================================
     
-    private void mostrarCatalogo(ArrayList<Libro> librosMostrados) {
+    private void mostrarCatalogo(String categoriaFiltro) {
+    	String tituloCatalogo = categoriaFiltro.equals("Todas") ?
+    			"Libros Recientes" : "Libros de " + categoriaFiltro + ": ";
     	
-    	JPanel panelGridTemporal = new JPanel(new GridLayout(0,5,20,20));
-    	panelGridTemporal.setBorder(new EmptyBorder(20, 20, 20, 20));
-    	    	
-        for (Libro l : librosMostrados) {
-            JPanel card = new JPanel(new BorderLayout());
-            card.setBorder(new LineBorder(Color.LIGHT_GRAY));
-
-            // Escalado de imagen
-            ImageIcon icon = new ImageIcon(l.getRutaImagen());
-            Image img = icon.getImage().getScaledInstance(140, 190, Image.SCALE_SMOOTH);
-            JLabel lblImg = new JLabel(new ImageIcon(img));
-            lblImg.setCursor(new Cursor(Cursor.HAND_CURSOR));
-            
-            JPanel pnlInfo = new JPanel(new GridLayout(2, 1));
-            JLabel lblT = new JLabel(l.getTitulo(), SwingConstants.CENTER);
-            lblT.setFont(CargarFuente.get(CargarFuente.BOLD, 14f));
-            lblT.setCursor(new Cursor(Cursor.HAND_CURSOR));
-            
-            // Registrar los eventos del mouse
-            java.awt.event.MouseAdapter eventoClicLibro = new java.awt.event.MouseAdapter() {
-            	@Override
-            	public void mouseClicked(java.awt.event.MouseEvent e) {
-            		mostrarDetalleLibro(l);
-            	}
-            };
-            lblImg.addMouseListener(eventoClicLibro);
-            lblT.addMouseListener(eventoClicLibro);
-            
-            // Botón Dinámico según el estado del libro
-            JButton btnAccion = new JButton();
-            
-            if (l.isDisponible()) {
-                btnAccion.setText("Rentar");
-                btnAccion.setEnabled(true);
-                btnAccion.addActionListener(e -> rentarLibro(l));
-                
-            } else if (usuarioActual != null && usuarioActual.getMatricula().equals(l.getMatriculaPrestamo())) {
-                // Si está ocupado pero el usuario actual fue quien lo rentó
-                btnAccion.setText("Devolver");
-                btnAccion.setEnabled(true);
-                btnAccion.addActionListener(e -> devolverLibro(l));
-                
-            } else {
-                // Si está ocupado por otro usuario o somos invitados
-                btnAccion.setText("Prestado");
-                btnAccion.setEnabled(false);
-            }
-
-            pnlInfo.add(lblT);
-            pnlInfo.add(btnAccion);
-
-            card.add(lblImg, BorderLayout.CENTER);
-            card.add(pnlInfo, BorderLayout.SOUTH);
-            panelGridTemporal.add(card);
-        }
-        
-        // Envolvemos en un ScrollPane
-        JScrollPane scrollPane = new JScrollPane(panelGridTemporal);
-        scrollPane.setBorder(null);
-       
-        // Empacamos en un panel base para la navegacion entre ventanas
-        JPanel panelBase = new JPanel(new BorderLayout());
-        panelBase.add(scrollPane, BorderLayout.CENTER);
-        cambiarVista(panelBase);
+    	ArrayList<Libro> libros = gestorBiblioteca.filtrarPorCategoria(categoriaFiltro);
+    	cambiarVista(crearVistaListaLibros(tituloCatalogo, libros,categoriaFiltro));
+    	
     }
+    
+    // Ahora la funcion muestra la lista de libros de acuerdo a la categoria (por defecto "Todas)
+    private JPanel crearVistaListaLibros(String tituloLabel, ArrayList<Libro> librosMostrados, String filtroActual) {
+    	// Contenedor base
+    	JPanel panelBase = new JPanel(new BorderLayout());
+    	panelBase.setBackground(COLOR_FONDO);
+    	panelBase.setBorder(new EmptyBorder(20, 40, 20, 40));
+    	
+    	JLabel lblTitulo = new JLabel(tituloLabel);
+    	lblTitulo.setFont(CargarFuente.get(CargarFuente.BOLD, 22f));
+    	panelBase.add(lblTitulo, BorderLayout.NORTH);
+    	
+    	// Seccion Central - Aqui se apilan las entradas de cada libro
+    	JPanel panelListaLibros = new JPanel();
+    	panelListaLibros.setLayout(new BoxLayout(panelListaLibros, BoxLayout.Y_AXIS));
+    	panelListaLibros.setBackground(COLOR_FONDO);
+    	
+    	if (librosMostrados.isEmpty()) {
+    		panelListaLibros.add(crearEtiquetaVacia("No se encontraron libros para esta vista"));
+    	} else {
+    		for (Libro l : librosMostrados) {
+    			// panelListaLibros.add(crearTarjetaLibro(l)); // Se agregara despues de este
+    			
+    		}
+    	}
+    	
+    	// Envolvemos la lista en un scrollPane
+    	JScrollPane scrollPane = new JScrollPane(panelListaLibros);
+    	scrollPane.setBorder(null);
+    	scrollPane.getVerticalScrollBar().setUnitIncrement(16);
+    	scrollPane.getViewport().setBackground(COLOR_FONDO);
+    	panelBase.add(scrollPane, BorderLayout.CENTER);
+    	
+    	// Seccion Derecha - Filtros y Generacion de reportes (aun en desarrollo)
+    	JPanel sidebar = new JPanel(null);
+    	sidebar.setBackground(Color.WHITE);
+    	sidebar.setBorder(new LineBorder(new Color(220, 220, 220), 1, true));
+    	sidebar.setPreferredSize(new Dimension(300, 300));
+    	
+    	JLabel lblSel = new JLabel("Seleccion de Libros");
+    	lblSel.setFont(CargarFuente.get(CargarFuente.BOLD, 16f));
+    	lblSel.setBounds(20, 20, 200, 20); // Nos referimos al tamaño y posicion de este texto
+    	sidebar.add(lblSel);
+    
+    	JLabel lblCat = new JLabel("Categoria");
+    	lblCat.setFont(CargarFuente.get(CargarFuente.REGULAR, 14f));
+    	lblCat.setBounds(20, 60, 200, 15);
+    	sidebar.add(lblCat);
+    	
+    	// Cargamos categorias existentes
+    	ArrayList<String> listaCategorias = gestorBiblioteca.obtenerCategoriasUnicas();
+    	if (!listaCategorias.contains("Todas")) {
+    		listaCategorias.add(0, "Todas");
+    	}
+    	
+    	JComboBox<String> comboCategorias = new JComboBox<>(listaCategorias.toArray(new String[0])); // Convertir en arreglo FIJO para ser usado aqui
+    	comboCategorias.setFont(CargarFuente.get(CargarFuente.REGULAR, 14f));
+    	comboCategorias.setSelectedItem(filtroActual);
+    	comboCategorias.setBounds(20, 80, 250, 30);
+    	sidebar.add(comboCategorias);
+    	
+    	// Boton para aplicar filtro y actualizar la vista
+    	JButton btnFiltrar = new JButton(); // Actualizaremos despues por una nueva clase de boton personalizado
+    	btnFiltrar.setBounds(20, 140, 250, 30);
+    	sidebar.add(btnFiltrar);
+    	
+    }
+    
+    private JPanel crearTarjetaLibro(Libro l) {
+    	
+    }
+    
+    private void actualizarHeader() {
+    	// Para refrescar la vista cuando sucedan cambios hechos en el menu principal
+    }
+    
+    // =========================================================================
+    // METODOS AUXILIARES DE DISEÑO INTERNO
+    // =========================================================================
+    
     
     public void mostrarDetalleLibro(Libro libro) {
     	cambiarVista(crearPanelDetalle(libro));
@@ -1130,5 +1109,3 @@ class CargarFuente {
 	}
 	
 }
-
-
