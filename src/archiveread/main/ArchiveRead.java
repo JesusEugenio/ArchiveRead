@@ -244,6 +244,50 @@ public class ArchiveRead extends JFrame {
     // METODOS AUXILIARES DE DISEÑO INTERNO
     // =========================================================================
     
+    //Creacion de boton con estilo uniforme
+    private JButton crearBotonEstandar(String texto, Color bg, Color fg) {
+    	JButton btn = new JButton(texto);
+    	btn.setFont(CargarFuente.get(CargarFuente.BOLD,  14f));
+    	//Colores de fondo y de texto
+    	btn.setBackground(bg);
+    	btn.setForeground(fg);
+    	
+    	//Cursor (quita el borde de seleccion si se hace click, cambia a manita)
+    	btn.setFocusPainted(false);
+    	btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    	
+    	btn.setContentAreaFilled(false);
+    	btn.setOpaque(true);
+    	
+    	return btn;
+    }
+    
+    //Creacion de boton de menu (como texto)
+    private JLabel crearMenuLabel(String texto, Runnable accion) {
+    	JLabel lbl = new JLabel(texto);
+    	lbl.setFont(CargarFuente.get(CargarFuente.REGULAR, 15f));
+    	lbl.setForeground(new Color (50, 50, 50));
+    	lbl.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    	
+    	//detector de mouse
+    	lbl.addMouseListener(new MouseAdapter() {
+    		@Override
+    		public void mouseClicked(MouseEvent e) { 
+    			accion.run();
+    		}
+    	});
+    	return lbl;
+    }
+    
+    //Creacion de etiquetas de texto
+    private JLabel crearLabel_N(String texto, Font fuente, float size, Color color) {
+    	JLabel lbl = new JLabel(texto);
+    	lbl.setFont(CargarFuente.get(fuente, size));
+    	lbl.setForeground(color);
+    	return lbl;
+    }
+    
+    
     
     public void mostrarDetalleLibro(Libro libro) {
     	cambiarVista(crearPanelDetalle(libro));
