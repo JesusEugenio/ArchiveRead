@@ -28,7 +28,7 @@ public class FileUtils {
     }
 	
 	// Renombra la ruta de la imagen que suba el Administrador y se copia en un directorio
-	private String guardarPortada(String rutaOrigen, String titulo) {
+	public static String guardarPortada(String rutaOrigen, String titulo) {
     	if(rutaOrigen == null || rutaOrigen.contains("default.jpg")) {
     		return "covers/default.jpg";
     	}

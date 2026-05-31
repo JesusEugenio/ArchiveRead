@@ -24,7 +24,7 @@ public class PanelHeader extends JPanel {
         pnlIzquierda.setBackground(PaletaColores.BLANCO);
         
         JLabel lblLogo = new JLabel("ArchiveRead");
-        lblLogo.setFont(CargarFuente.get(CargarFuente.BOLD, 22f));
+        lblLogo.setFont(CargarFuente.getBold(22f));
         lblLogo.setForeground(PaletaColores.PRIMARIO);
         lblLogo.setCursor(new Cursor(Cursor.HAND_CURSOR));
         lblLogo.addMouseListener(new MouseAdapter() {

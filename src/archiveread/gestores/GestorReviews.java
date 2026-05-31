@@ -59,7 +59,7 @@ public class GestorReviews {
                     
                     // Aquí se inserta el nombre del usuario que dejó la review
                     JLabel lblUser = new JLabel(partes[0]);
-                    lblUser.setFont(CargarFuente.get(CargarFuente.BOLD, 14f));
+                    lblUser.setFont(CargarFuente.getBold(14f));
                     lblUser.setForeground(Color.BLACK);
                     
                     JTextArea txtTexto = new JTextArea(partes[1]);

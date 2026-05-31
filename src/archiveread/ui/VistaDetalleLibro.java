@@ -174,7 +174,7 @@ public class VistaDetalleLibro extends JPanel {
         txtSinopsis.setLineWrap(true);	
         txtSinopsis.setEditable(false);		
         txtSinopsis.setOpaque(false); 		
-        txtSinopsis.setFont(CargarFuente.get(CargarFuente.REGULAR, 15f));
+        txtSinopsis.setFont(CargarFuente.getRegular(15f));
         txtSinopsis.setForeground(PaletaColores.TEXTO_GRIS_OSCURO); 
         cardSinopsis.add(txtSinopsis, BorderLayout.NORTH);
         

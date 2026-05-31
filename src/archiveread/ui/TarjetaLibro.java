@@ -52,7 +52,7 @@ public class TarjetaLibro extends JPanel {
         
         JLabel lblEstadoSub = new JLabel(textoEstado, SwingConstants.CENTER);
         lblEstadoSub.setForeground(colorEstado);
-        lblEstadoSub.setFont(CargarFuente.get(CargarFuente.REGULAR, 12f));
+        lblEstadoSub.setFont(CargarFuente.getRegular(12f));
         lblEstadoSub.setBorder(new EmptyBorder(5, 0, 0, 0));
         
         pnlIzq.add(lblEstadoSub, BorderLayout.SOUTH);
@@ -85,22 +85,32 @@ public class TarjetaLibro extends JPanel {
                                l.getSinopsis();
         
         JTextArea txtSinopsis = new JTextArea(sinopsisCorta);
-        txtSinopsis.setFont(CargarFuente.get(CargarFuente.REGULAR, 13f));
+        txtSinopsis.setFont(CargarFuente.getRegular(13f));
         txtSinopsis.setForeground(PaletaColores.TEXTO_NEGRO);
         txtSinopsis.setLineWrap(true);
         txtSinopsis.setWrapStyleWord(true);
         txtSinopsis.setEditable(false);
         txtSinopsis.setOpaque(false);
         txtSinopsis.setFocusable(false);
-        txtSinopsis.setBorder(new EmptyBorder(10, 0, 10, 0));
+        txtSinopsis.setBorder(new EmptyBorder(10, 0, 5, 0));
         txtSinopsis.setCursor(new Cursor(Cursor.HAND_CURSOR));
         txtSinopsis.addMouseListener(eventoClic); // La sinopsis también funciona como botón
 
         JLabel lblEstado = UIUtils.crearLabel(l.getPaginas() + " pág.", CargarFuente.REGULAR, 13f, PaletaColores.TEXTO_GRIS_OSCURO);
+        
+        // Agrupamos Sinopsis y Estado para que suban juntos
+        JPanel pnlCentroTextos = new JPanel(new BorderLayout());
+        pnlCentroTextos.setOpaque(false);
+        pnlCentroTextos.add(txtSinopsis, BorderLayout.NORTH);
+        
+        JPanel pnlWrapEstado = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        pnlWrapEstado.setOpaque(false);
+        pnlWrapEstado.add(lblEstado);
+        
+        pnlCentroTextos.add(pnlWrapEstado, BorderLayout.CENTER);
 
         panelInfo.add(pnlTitulos, BorderLayout.NORTH);
-        panelInfo.add(txtSinopsis, BorderLayout.CENTER);
-        panelInfo.add(lblEstado, BorderLayout.SOUTH);
+        panelInfo.add(pnlCentroTextos, BorderLayout.CENTER);;
 
         // Ensamblaje final de la tarjeta
         panelTarjeta.add(pnlIzq, BorderLayout.WEST);

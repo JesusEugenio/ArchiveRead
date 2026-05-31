@@ -20,6 +20,7 @@ public class PaletaColores {
 	public static final Color FONDO_BANNER_OSCURO = new Color(10, 10, 10); 	// El banner oscuro de la vista de detalles 
 	public static final Color BORDE_CLARO = new Color(220, 220, 220);
 	public static final Color BORDE_TARJETA = new Color(230, 230, 230);
+	public static final Color FONDO_AREA = new Color(245, 245, 245);
 	
 	// Botones y estados de libro
 	public static final Color ESTADO_DISPONIBLE = new Color(40, 168, 94);

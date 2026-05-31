@@ -4,13 +4,14 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 
 public class UIUtils {
 	
 	// Es el encargado de crear el texto para la UI y que tenga la fuente personalizada
 	public static JLabel crearLabel(String texto, Font fuente, float size, Color colorTexto) {
 		JLabel lbl = new JLabel(texto);
-		lbl.setFont(CargarFuente.get(fuente, size));
+		lbl.setFont(fuente.deriveFont(size));
 		lbl.setForeground(colorTexto);
 		
 		return lbl;
@@ -38,7 +39,7 @@ public class UIUtils {
     	}; 
     	
     	
-    	btn.setFont(CargarFuente.get(CargarFuente.BOLD,  14f));
+    	btn.setFont(CargarFuente.getBold(14f));
     	
     	// Asignamos color al texto 
     	if (fg != null) {
@@ -74,7 +75,7 @@ public class UIUtils {
     // Funciona como un Texto con funciones al dar clic en el 
     public static JLabel crearMenuLabel(String texto, Runnable accion) {
     	JLabel lbl = new JLabel(texto);
-    	lbl.setFont(CargarFuente.get(CargarFuente.REGULAR, 15f));
+    	lbl.setFont(CargarFuente.getRegular(15f));
     	lbl.setForeground(new Color (50, 50, 50));
     	lbl.setCursor(new Cursor(Cursor.HAND_CURSOR));
     	
@@ -97,7 +98,7 @@ public class UIUtils {
         // Colores base del componente cerrado
         combo.setBackground(Color.WHITE);
         combo.setForeground(PaletaColores.TEXTO_NEGRO);
-        combo.setFont(CargarFuente.get(CargarFuente.REGULAR, 14f));
+        combo.setFont(CargarFuente.getRegular(14f));
         combo.setBorder(BorderFactory.createLineBorder(PaletaColores.BORDE_CLARO, 1));
         combo.setFocusable(false); // Quita el recuadro punteado al hacer clic
         
@@ -126,10 +127,24 @@ public class UIUtils {
     // Cuando hay campos que rellenar se utiliza esta funcion para que el usuario sepa que tiene que escribir ahi
     public static JLabel crearEtiquetaVacia(String texto) {
     	JLabel lblVacio = new JLabel(texto);
-    	lblVacio.setFont(CargarFuente.get(CargarFuente.REGULAR, 14f));
+    	lblVacio.setFont(CargarFuente.getRegular(14f));
     	lblVacio.setBorder(new EmptyBorder(0, 10, 0,0 ));
     	lblVacio.setAlignmentX(Component.LEFT_ALIGNMENT);
     	return lblVacio;
     }
-
+    
+    
+    // Genera un campo de texto para areas donde el usuario tiene que escribir+
+    public static JTextField crearTextFieldFormulario() {
+    	JTextField txt = new JTextField();
+    	txt.setFont(CargarFuente.getRegular(14f));
+    	txt.setBorder(BorderFactory.createCompoundBorder(
+    			new LineBorder(PaletaColores.BORDE_CLARO, 1, true),
+    			new EmptyBorder(0, 10, 0, 10)
+    	));
+    	txt.setBackground(PaletaColores.FONDO_AREA);
+    	txt.setAlignmentX(Component.LEFT_ALIGNMENT);
+    	return txt;
+    }
 }
+

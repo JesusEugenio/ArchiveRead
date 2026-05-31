@@ -39,9 +39,16 @@ public class CargarFuente {
 		
 		}
 	
-	public static Font get(Font fuenteBase, float tamano) {
-		return fuenteBase.deriveFont(tamano);
-		
+	public static Font getRegular(float tamano) {
+		return REGULAR.deriveFont(tamano);
+	}
+	
+	public static Font getBold(float tamano) {
+		return BOLD.deriveFont(tamano);
+	}
+	
+	public static Font getItalic(float tamano) {
+		return ITALIC.deriveFont(tamano);
 	}
 	
 }

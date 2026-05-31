@@ -24,7 +24,7 @@ public class VistaListaLibros extends JPanel {
         setBorder(new EmptyBorder(20, 40, 20, 40));
         
         JLabel lblTitulo = new JLabel(tituloLabel);
-        lblTitulo.setFont(CargarFuente.get(CargarFuente.BOLD, 22f));
+        lblTitulo.setFont(CargarFuente.getBold(22f));
         add(lblTitulo, BorderLayout.NORTH);
         
         // Seccion Central - Aqui se apilan las entradas de cada libro
@@ -78,12 +78,12 @@ public class VistaListaLibros extends JPanel {
         cajaFiltros.setMaximumSize(new Dimension(300, 200)); // Evita que se estire
         
         JLabel lblSel = new JLabel("Seleccion de Libros");
-        lblSel.setFont(CargarFuente.get(CargarFuente.BOLD, 16f));
+        lblSel.setFont(CargarFuente.getBold(16f));
         lblSel.setBounds(20, 20, 200, 20); // Nos referimos al tamaño y posicion de este texto
         cajaFiltros.add(lblSel);
     
         JLabel lblCat = new JLabel("Categoria");
-        lblCat.setFont(CargarFuente.get(CargarFuente.REGULAR, 14f));
+        lblCat.setFont(CargarFuente.getRegular(14f));
         lblCat.setBounds(20, 60, 200, 15);
         cajaFiltros.add(lblCat);
         
@@ -94,7 +94,7 @@ public class VistaListaLibros extends JPanel {
         
         JComboBox<String> comboCategorias = new JComboBox<>(listaCategorias.toArray(new String[0])); // Convertir en arreglo FIJO para ser usado aqui
         UIUtils.aplicarEstiloCombo(comboCategorias);
-        comboCategorias.setFont(CargarFuente.get(CargarFuente.REGULAR, 14f));
+        comboCategorias.setFont(CargarFuente.getRegular(14f));
         comboCategorias.setSelectedItem(filtroActual);
         comboCategorias.setBounds(20, 80, 250, 30);
         cajaFiltros.add(comboCategorias);
