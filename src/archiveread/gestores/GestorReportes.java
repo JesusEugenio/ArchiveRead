@@ -95,7 +95,10 @@ public class GestorReportes {
                 try(BufferedWriter writer = new BufferedWriter(new FileWriter(file))){
                     writer.write("--- AUTOR: " + autor + " ---\n\n");
                     for(Libro l : gestorBiblioteca.obtenerLibros()) {
-                        writer.write("- " + l.getTitulo() + " (" + l.getCategoria() + ")\n");
+                        // Validamos que el libro pertenezca al autor actual
+                        if(l.getAutor().equals(autor)) {
+                            writer.write("- " + l.getTitulo() + " (" + l.getCategoria() + ")\n");
+                        }
                     }
                 }
             }
