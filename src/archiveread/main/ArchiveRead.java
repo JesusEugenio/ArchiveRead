@@ -55,7 +55,9 @@ public class ArchiveRead extends JFrame {
         // Configuración de la ventana
         setTitle("ArchiveRead");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(1024, 720);
         setMinimumSize(new Dimension(800, 600));
+        setLocationRelativeTo(null);
         setExtendedState(JFrame.MAXIMIZED_BOTH); // Inicia maximizada
 
         panelPrincipal = new JPanel(new BorderLayout());
@@ -204,8 +206,7 @@ public class ArchiveRead extends JFrame {
         } else {
             libro.setDisponible(false);
             libro.setMatriculaPrestamo(usuarioActual.getMatricula());
-            gestorBiblioteca.actualizarLibro(); 
-            mostrarCatalogo("Todas"); 
+            gestorBiblioteca.actualizarLibro();  
         }
     }
 
@@ -213,7 +214,6 @@ public class ArchiveRead extends JFrame {
         libro.setDisponible(true);
         libro.setMatriculaPrestamo(null);
         gestorBiblioteca.actualizarLibro(); 
-        mostrarCatalogo("Todas"); 
     }
 
 }
