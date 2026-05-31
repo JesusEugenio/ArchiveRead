@@ -17,7 +17,7 @@ public class TarjetaLibro extends JPanel {
         setOpaque(false); 
         setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0)); 
         setAlignmentX(Component.LEFT_ALIGNMENT);
-        setMaximumSize(new Dimension(Integer.MAX_VALUE, 220));
+        setMaximumSize(new Dimension(Integer.MAX_VALUE, 250));
     	
         // Contenedor principal, tarjeta blanca que agrupa todo el contenido del libro
         JPanel panelTarjeta = new JPanel(new BorderLayout(20, 0));
@@ -37,11 +37,26 @@ public class TarjetaLibro extends JPanel {
         };
         
         // Lado izquierdo ... Portada del libro y su estado
+        JPanel pnlIzq = new JPanel(new BorderLayout());
+        pnlIzq.setBackground(PaletaColores.BLANCO);
+        
         ImageIcon iconoPortada = new ImageIcon(l.getRutaImagen());
         Image imgEscalada = iconoPortada.getImage().getScaledInstance(120, 170, Image.SCALE_SMOOTH);
         JLabel lblImagen = new JLabel(new ImageIcon(imgEscalada));
         lblImagen.setCursor(new Cursor(Cursor.HAND_CURSOR));
         lblImagen.addMouseListener(eventoClic); // La portada funcionara como boton
+        pnlIzq.add(lblImagen, BorderLayout.CENTER);
+        
+        String textoEstado = l.isDisponible() ? "Disponible" : "Prestado";
+        Color colorEstado = l.isDisponible() ? PaletaColores.ESTADO_DISPONIBLE : PaletaColores.ESTADO_OCUPADO;
+        
+        JLabel lblEstadoSub = new JLabel(textoEstado, SwingConstants.CENTER);
+        lblEstadoSub.setForeground(colorEstado);
+        lblEstadoSub.setFont(CargarFuente.get(CargarFuente.REGULAR, 12f));
+        lblEstadoSub.setBorder(new EmptyBorder(5, 0, 0, 0));
+        
+        pnlIzq.add(lblEstadoSub, BorderLayout.SOUTH);
+        
         
         // Lado derecho ... Informacion del libro
         JPanel panelInfo = new JPanel(new BorderLayout(0, 5));
@@ -88,7 +103,7 @@ public class TarjetaLibro extends JPanel {
         panelInfo.add(lblEstado, BorderLayout.SOUTH);
 
         // Ensamblaje final de la tarjeta
-        panelTarjeta.add(lblImagen, BorderLayout.WEST);
+        panelTarjeta.add(pnlIzq, BorderLayout.WEST);
         panelTarjeta.add(panelInfo, BorderLayout.CENTER);
         add(panelTarjeta, BorderLayout.CENTER);
     }

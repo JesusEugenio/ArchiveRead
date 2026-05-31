@@ -83,13 +83,12 @@ public class VistaDetalleLibro extends JPanel {
     	// Titulo
     	JLabel lblTitulo = UIUtils.crearLabel(libro.getTitulo(), CargarFuente.BOLD, 32f, PaletaColores.TEXTO_BLANCO);
     	lblTitulo.setAlignmentX(Component.LEFT_ALIGNMENT);
-    	lblTitulo.setBorder(new EmptyBorder(15, 0, 10, 0));
     	
     	// Evaluar disponibilidad
     	String textoDisponibilidad = libro.isDisponible() ? "Disponible" : "Ocupado";
     	JLabel lblStats = UIUtils.crearLabel(" " + libro.getPaginas() + " Paginas   |   " + textoDisponibilidad, CargarFuente.REGULAR, 14f, PaletaColores.TEXTO_GRIS_CLARO);
     	lblStats.setAlignmentX(Component.LEFT_ALIGNMENT);
-    	lblTitulo.setBorder(new EmptyBorder(0, 0, 35, 0));
+    	lblTitulo.setBorder(new EmptyBorder(0, 0, 10, 0));
     	
     	// Panel para botones rentar y añadir a biblioteca
     	JPanel pnlBotones = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -98,7 +97,7 @@ public class VistaDetalleLibro extends JPanel {
     	
     	// Boton de Rentar / Prestado 
     	JButton btnRentar = UIUtils.crearBotonEstandar("Rentar");
-    	btnRentar.setPreferredSize(new Dimension(150, 45));
+    	btnRentar.setPreferredSize(new Dimension(180, 45));
     	
     	if (libro.isDisponible()) {
             btnRentar.addActionListener(e -> onRentarLibro.run());
@@ -119,7 +118,7 @@ public class VistaDetalleLibro extends JPanel {
     	// Boton de Añadir a Biblioteca / Guardado
     	boolean estaGuardado = (usuarioActual != null) && libro.estaGuardado(usuarioActual.getMatricula());
         JButton btnGuardar = UIUtils.crearBotonEstandar(estaGuardado ? "En Biblioteca" : "Añadir a Biblioteca");
-        btnGuardar.setPreferredSize(new Dimension(150, 45));
+        btnGuardar.setPreferredSize(new Dimension(180, 45));
         btnGuardar.setBackground(estaGuardado ? PaletaColores.BLANCO : PaletaColores.BOTON_OSCURO);
         btnGuardar.setForeground(estaGuardado ? PaletaColores.PRIMARIO : PaletaColores.BLANCO);
         btnGuardar.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
@@ -130,6 +129,7 @@ public class VistaDetalleLibro extends JPanel {
         pnlBotones.add(Box.createHorizontalStrut(15));
         pnlBotones.add(btnGuardar);
         
+        pnlInfoBanner.add(Box.createVerticalStrut(40));
         pnlInfoBanner.add(lblTitulo);
         pnlInfoBanner.add(lblStats);
         pnlInfoBanner.add(Box.createVerticalGlue()); 
@@ -193,6 +193,8 @@ public class VistaDetalleLibro extends JPanel {
         JScrollPane scrollReviews = new JScrollPane(listaReviews);
         scrollReviews.setBorder(null);
         scrollReviews.getViewport().setBackground(PaletaColores.FONDO_PRINCIPAL);
+        scrollReviews.getVerticalScrollBar().setUI(new ScrollModernoUI());
+        scrollReviews.getVerticalScrollBar().setPreferredSize(new Dimension(14, 0));
         cardReviews.add(scrollReviews, BorderLayout.CENTER);
         
         pnlCards.add(cardSinopsis, "SINOPSIS");
@@ -268,10 +270,12 @@ public class VistaDetalleLibro extends JPanel {
         pnlFichaInfo.add(UIUtils.crearLabel(String.valueOf(libro.getPaginas()), CargarFuente.REGULAR, 13f, Color.BLACK));
         
         pnlFichaInfo.add(UIUtils.crearLabel("Categorias:", CargarFuente.REGULAR, 13f, Color.GRAY));
-        pnlFichaInfo.add(UIUtils.crearLabel(libro.getCategoria(), CargarFuente.REGULAR, 13f, Color.BLACK));
+        pnlFichaInfo.add(UIUtils.crearLabel(catsUnidas, CargarFuente.REGULAR, 13f, Color.BLACK));
+        
         
         pnlDerecha.add(lblAutorTitulo);
         pnlDerecha.add(pnlCajaAutor);
+        pnlDerecha.add(lblAcercaTitulo);
         pnlDerecha.add(pnlFichaInfo);
         pnlInferior.add(pnlDerecha, BorderLayout.EAST);
         
@@ -285,8 +289,16 @@ public class VistaDetalleLibro extends JPanel {
         JScrollPane scrollGeneralDetalles = new JScrollPane(pnlContenidoCentral);
         scrollGeneralDetalles.setBorder(null);
         scrollGeneralDetalles.getVerticalScrollBar().setUnitIncrement(16); 
-        scrollGeneralDetalles.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); 
+        scrollGeneralDetalles.getHorizontalScrollBar().setUnitIncrement(16);      
         scrollGeneralDetalles.getViewport().setBackground(PaletaColores.FONDO_PRINCIPAL);
+        
+        scrollGeneralDetalles.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollGeneralDetalles.getVerticalScrollBar().setUI(new ScrollModernoUI());
+        scrollGeneralDetalles.getVerticalScrollBar().setPreferredSize(new Dimension(13, 0));
+        
+        scrollGeneralDetalles.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollGeneralDetalles.getHorizontalScrollBar().setUI(new ScrollModernoUI());
+        scrollGeneralDetalles.getHorizontalScrollBar().setPreferredSize(new Dimension(0, 13));
         
         // Forzamos el scroll hacia arriba (que siempre empiece ahi)
         SwingUtilities.invokeLater(() -> scrollGeneralDetalles.getVerticalScrollBar().setValue(0));

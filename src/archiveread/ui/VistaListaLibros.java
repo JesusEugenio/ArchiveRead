@@ -1,9 +1,7 @@
 package archiveread.ui;
 
-import archiveread.utils.PaletaColores;
+import archiveread.utils.*;
 import archiveread.modelos.Libro;
-import archiveread.utils.CargarFuente;
-import archiveread.utils.UIUtils;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -38,36 +36,56 @@ public class VistaListaLibros extends JPanel {
             panelListaLibros.add(UIUtils.crearEtiquetaVacia("No se encontraron libros para esta vista"));
         } else {
             for (Libro l : librosMostrados) {
-                // [EXPLICACIÓN CONSUMER]: A cada tarjeta le decimos "Si te tocan, manda ESTE libro 'l' por el cable al Main".
+                // A cada tarjeta le decimos "Si te tocan, manda ESTE libro 'l' por el cable al Main".
                 panelListaLibros.add(new TarjetaLibro(l, () -> onLibroSeleccionado.accept(l))); 
             }
         }
+        
+        panelListaLibros.setBackground(PaletaColores.FONDO_PRINCIPAL);
+        panelListaLibros.setOpaque(true);
         
         // Envolvemos la lista en un scrollPane
         JScrollPane scrollPane = new JScrollPane(panelListaLibros);
         scrollPane.setBorder(null);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         scrollPane.getViewport().setBackground(PaletaColores.FONDO_PRINCIPAL);
+        scrollPane.getViewport().setScrollMode(javax.swing.JViewport.SIMPLE_SCROLL_MODE);
+        
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.getVerticalScrollBar().setUI(new ScrollModernoUI()); 
+        scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(14, 0));
+        
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.getHorizontalScrollBar().setUI(new ScrollModernoUI());
+        scrollPane.getHorizontalScrollBar().setPreferredSize(new Dimension(0, 13));
         
         // Forzamos el scroll al inicio (arriba)
         SwingUtilities.invokeLater(() -> scrollPane.getVerticalScrollBar().setValue(0));
         add(scrollPane, BorderLayout.CENTER);
         
-        // Seccion Derecha - Filtros y Generacion de reportes (aun en desarrollo)
-        JPanel sidebar = new JPanel(null);
-        sidebar.setBackground(PaletaColores.BLANCO);
-        sidebar.setBorder(new LineBorder(PaletaColores.BORDE_CLARO, 1, true));
-        sidebar.setPreferredSize(new Dimension(300, 320));
+        // Seccion Derecha - Filtros y Generacion de reportes (separados9
+        JPanel pnlLateral = new JPanel(null);
+        pnlLateral.setLayout(new BoxLayout(pnlLateral, BoxLayout.Y_AXIS));
+        pnlLateral.setBackground(PaletaColores.FONDO_PRINCIPAL);
+        pnlLateral.setPreferredSize(new Dimension(300, 400));
+        
+        // Caja de Filtros
+        JPanel cajaFiltros = new JPanel(null); // Para usar coordenadas setBounds
+        cajaFiltros.setBackground(PaletaColores.BLANCO);
+        cajaFiltros.setBorder(new LineBorder(PaletaColores.BORDE_CLARO, 1, true));
+        cajaFiltros.setPreferredSize(new Dimension(300, 200));
+        cajaFiltros.setMinimumSize(new Dimension(300, 200));
+        cajaFiltros.setMaximumSize(new Dimension(300, 200)); // Evita que se estire
         
         JLabel lblSel = new JLabel("Seleccion de Libros");
         lblSel.setFont(CargarFuente.get(CargarFuente.BOLD, 16f));
         lblSel.setBounds(20, 20, 200, 20); // Nos referimos al tamaño y posicion de este texto
-        sidebar.add(lblSel);
+        cajaFiltros.add(lblSel);
     
         JLabel lblCat = new JLabel("Categoria");
         lblCat.setFont(CargarFuente.get(CargarFuente.REGULAR, 14f));
         lblCat.setBounds(20, 60, 200, 15);
-        sidebar.add(lblCat);
+        cajaFiltros.add(lblCat);
         
         // Cargamos categorias existentes
         if (!listaCategorias.contains("Todas")) {
@@ -75,45 +93,63 @@ public class VistaListaLibros extends JPanel {
         }
         
         JComboBox<String> comboCategorias = new JComboBox<>(listaCategorias.toArray(new String[0])); // Convertir en arreglo FIJO para ser usado aqui
+        UIUtils.aplicarEstiloCombo(comboCategorias);
         comboCategorias.setFont(CargarFuente.get(CargarFuente.REGULAR, 14f));
         comboCategorias.setSelectedItem(filtroActual);
         comboCategorias.setBounds(20, 80, 250, 30);
-        sidebar.add(comboCategorias);
+        cajaFiltros.add(comboCategorias);
         
         // Boton para aplicar filtro y actualizar la vista
         JButton btnFiltrar = UIUtils.crearBotonEstandar("Mostrar Libros");
-        btnFiltrar.setBounds(20, 140, 250, 30);
+        btnFiltrar.setBounds(20, 130, 250, 40);
         btnFiltrar.addActionListener( e -> {
             // Leemos el texto del combo y lo mandamos por el cable 'onFiltrar' al Main
             onFiltrar.accept(comboCategorias.getSelectedItem().toString());
         });
-        sidebar.add(btnFiltrar);
+        cajaFiltros.add(btnFiltrar);
+        
+        // Caja de Reportes
+        JPanel cajaReportes = new JPanel(null);
+        cajaReportes.setBackground(PaletaColores.BLANCO);
+        cajaReportes.setBorder(new LineBorder(PaletaColores.BORDE_CLARO, 1, true));
+        cajaReportes.setPreferredSize(new Dimension(300, 120));
+        cajaReportes.setMinimumSize(new Dimension(300, 200));
+        cajaReportes.setMaximumSize(new Dimension(300, 120));
         
         // Enlaces para generar reportes en archivos .txt "AUN EN PROCESO / REDISEÑO"
         JLabel lblReportesTitulo = UIUtils.crearLabel("Generar Reportes (.txt)", CargarFuente.BOLD, 15f, PaletaColores.TEXTO_NEGRO);
-        lblReportesTitulo.setBounds(20, 210, 250, 20);
-        sidebar.add(lblReportesTitulo);
+        lblReportesTitulo.setBounds(20, 20, 250, 20);
+        cajaReportes.add(lblReportesTitulo);
 
         JLabel lblReporteCat = UIUtils.crearLabel("Reporte de Categorías", CargarFuente.REGULAR, 14f, PaletaColores.PRIMARIO);
-        lblReporteCat.setBounds(20, 240, 250, 20);
+        lblReporteCat.setBounds(20, 50, 250, 20);
         lblReporteCat.setCursor(new Cursor(Cursor.HAND_CURSOR));
         lblReporteCat.addMouseListener(new MouseAdapter() {
             @Override public void mouseClicked(MouseEvent e) { onReporteCat.run(); }
         });
-        sidebar.add(lblReporteCat);
+        cajaReportes.add(lblReporteCat);
 
         JLabel lblReporteAut = UIUtils.crearLabel("Reporte de Autores", CargarFuente.REGULAR, 14f, PaletaColores.PRIMARIO);
-        lblReporteAut.setBounds(20, 270, 250, 20);
+        lblReporteAut.setBounds(20, 80, 250, 20);
         lblReporteAut.setCursor(new Cursor(Cursor.HAND_CURSOR));
         lblReporteAut.addMouseListener(new MouseAdapter() {
             @Override public void mouseClicked(MouseEvent e) { onReporteAut.run(); }
         });
-        sidebar.add(lblReporteAut);
+        cajaReportes.add(lblReporteAut);
+        
+        // Ensamblamos las cajas en el pnlLateral
+        pnlLateral.add(cajaFiltros);
+        pnlLateral.add(Box.createVerticalStrut(20)); // Separacion entre cajas
+        pnlLateral.add(cajaReportes);
 
         // Envoltorio para fijar el Sidebar arriba y evitar que se estire con la ventana
         JPanel wrapperFiltro = new JPanel(new BorderLayout());
         wrapperFiltro.setBackground(PaletaColores.FONDO_PRINCIPAL);
-        wrapperFiltro.add(sidebar, BorderLayout.NORTH);
+        
+        wrapperFiltro.setPreferredSize(new Dimension(300, 0));
+        wrapperFiltro.setMinimumSize(new Dimension(300, 0));
+        
+        wrapperFiltro.add(pnlLateral, BorderLayout.NORTH);
         add(wrapperFiltro, BorderLayout.EAST);
     }
 }
