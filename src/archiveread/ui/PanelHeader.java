@@ -1,6 +1,6 @@
 package archiveread.ui;
 
-import archiveread.modelos.Usuario;
+import archiveread.modelos.*;
 import archiveread.utils.*;
 
 import java.awt.*;
@@ -13,7 +13,8 @@ import javax.swing.*;
 
 public class PanelHeader extends JPanel {
 	
-	public PanelHeader(Usuario usuarioActual, Runnable onLogoClick, Runnable onMiBibliotecaClick, Runnable onIngresarClick, Runnable onSalirClick) {
+	public PanelHeader(Usuario usuarioActual, Runnable onLogoClick, Runnable onMiBibliotecaClick, Runnable onIngresarClick, Runnable onSalirClick,
+						Runnable onAnadirLibroClick, Runnable onReportePrestamosClick) {
 		// Runnables : Header no sabe que pasa cuando hacemos click en esas partes, solo sabe que debe ejecutar la accion que le mandaron
 		
 		setLayout(new BorderLayout());
@@ -36,6 +37,13 @@ public class PanelHeader extends JPanel {
         JPanel pnlDerecha = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 10));
         pnlDerecha.setBackground(PaletaColores.BLANCO);
         
+        // Evaluamos si el usuario que existe es Admin ("Soy Admin.png")
+        if (usuarioActual instanceof Administrador) {
+        	// Si el usuario es una instancia de Administrador añadimos los siguientes botones solo para el 
+        	pnlIzquierda.add(UIUtils.crearMenuLabel("Añadir Libro", onAnadirLibroClick));
+        	pnlIzquierda.add(UIUtils.crearMenuLabel("ReportePrestamos", onReportePrestamosClick));
+        }
+        
         if (usuarioActual == null) {
             JButton btnIngresar = UIUtils.crearBotonEstandar("Ingresar", PaletaColores.COLOR_FONDO_BOX, PaletaColores.TEXTO_GRIS_OSCURO);
             
@@ -44,7 +52,7 @@ public class PanelHeader extends JPanel {
             
         } else {
             pnlDerecha.add(UIUtils.crearLabel("Hola, " + usuarioActual.getNombre(), CargarFuente.BOLD, 14f, Color.BLACK));
-            JButton btnSalir = UIUtils.crearBotonEstandar("Cerrar Sesión", null, PaletaColores.TEXTO_GRIS_OSCURO);
+            JButton btnSalir = UIUtils.crearBotonEstandar("Cerrar Sesión", PaletaColores.PRIMARIO, PaletaColores.TEXTO_BLANCO);
             btnSalir.addActionListener(e -> onSalirClick.run());
             pnlDerecha.add(btnSalir);
         }

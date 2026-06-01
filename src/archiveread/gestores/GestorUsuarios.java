@@ -22,7 +22,7 @@ public class GestorUsuarios {
     private void cargarUsuariosBinario() {
         File archivo = new File(ARCHIVO_USUARIOS);
         if (!archivo.exists()) {
-            usuariosRegistrados.add(new Administrador("admin", "admin123", "Administrador Total"));
+            usuariosRegistrados.add(new Administrador("admin", "admin123", "Administrador"));
             usuariosRegistrados.add(new Lector("548821", "1234", "Jesus Eugenio"));
             guardarUsuariosBinario();
             return;

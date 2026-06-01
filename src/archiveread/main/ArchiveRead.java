@@ -1,4 +1,4 @@
-// Archive Read - Version 1.6.0
+// Archive Read - Version 1.7.0
 // ================================
 // Laura Alvarez y Jesus Eugenio
 // ================================
@@ -99,6 +99,28 @@ public class ArchiveRead extends JFrame {
     	panelPrincipal.revalidate();
     	panelPrincipal.repaint();
     }
+    
+    public void mostrarNuevoLibro() {
+    	// Obtenemos las categorias para el ComboBox del formulario
+    	ArrayList<String> categoriasUnicas = gestorBiblioteca.obtenerCategoriasUnicas();
+    	
+    	// Cuando el Administrador da click en "Guardar Libro" dentro de VistaNuevoLibro
+    	// la vista nos lanza el objeto libro terminado (a excepcion de ID)
+    	// Aqui lo atrapamos (llamado 'nuevoLibro'), le generamos un ID y lo guardamos
+    	cambiarVista(new VistaNuevoLibro(categoriasUnicas, nuevoLibro -> {
+    		
+    		// Generamos el ID del libro en base a cuantos hay (ej. "L005")
+    		String nuevoID = gestorBiblioteca.generarSiguienteId();
+    		nuevoLibro.setIdLibro(nuevoID);
+    		
+    		// Le pedimos al Gestor que guarde el Libro en el archivo .dat
+    		gestorBiblioteca.registrarLibro(nuevoLibro);
+    		
+    		// Avisamos al usuario y regresamos al menu principal
+    		JOptionPane.showMessageDialog(this, "El libro '" + nuevoLibro.getTitulo() + "' ha sido añadido!");
+    		mostrarCatalogo("Todas");
+    	}));
+    }
 
     // =========================================================================
     // MÉTODOS DE SESIÓN
@@ -159,7 +181,9 @@ public class ArchiveRead extends JFrame {
     			() -> mostrarCatalogo("Todas"), 
     			() -> mostrarMiBiblioteca(), 
     			() -> abrirDialogoLogin(), 
-    			() -> cerrarSesion()		
+    			() -> cerrarSesion(),
+    			() -> mostrarNuevoLibro(), 
+    			() -> gestorReportes.generarReportePrestamos(this, gestorBiblioteca, gestorUsuarios)		
     	);
     	
     	panelPrincipal.add(panelHeader, BorderLayout.NORTH);
