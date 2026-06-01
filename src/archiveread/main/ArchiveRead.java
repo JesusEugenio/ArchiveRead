@@ -127,19 +127,7 @@ public class ArchiveRead extends JFrame {
     // =========================================================================
     
     private void abrirDialogoLogin() {
-    	/* No podemos hacer una funcion que retorne el usuario por que detendria todo el programa esperando el usuario,
-    	 * por eso usamos un Consumer, al que se le asignan las instrucciones de u y que va a inyectar el resultado obtenido
-    	 * cuando el login salga bien y mientras tanto el Main puede ejecutar otras acciones */
     	
-    	// Las instrucciones de u son las que ejecuta 'onLoginExitoso' en DialogoLogin.java y las inyecta al Main
-    	// 'u ->' significa: el dato que inyecte de este Callback se llamara 'u' 
-    	DialogoLogin dialogLogin = new DialogoLogin(this, gestorUsuarios, u -> {
-    		usuarioActual = u; 
-    		actualizarHeader();
-    		mostrarCatalogo("Todas");
-    	});
-    	
-    	dialogLogin.setVisible(true);
     }
     
     // Cerramos sesion y regresamos la interfaz al modo invitado

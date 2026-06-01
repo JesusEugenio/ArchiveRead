@@ -2,7 +2,6 @@ package archiveread.gestores;
 
 import archiveread.modelos.*;
 import java.io.*;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 // =========================================================================
@@ -17,6 +16,8 @@ public class GestorUsuarios {
 
     public GestorUsuarios() {
         usuariosRegistrados = new HashMap<>();
+        
+        // Al iniciar el gestor, cargamoss los usuarios que ya existan
         cargarUsuarios();
         
         
@@ -51,6 +52,7 @@ public class GestorUsuarios {
     // INICIAR SESIÓN
     // ==========================================================================
     
+    //Verifica si la matrícula y contraseña coinciden con alguna cuenta guardada
     public Usuario validarCredenciales(String matricula, String password) {
     	Usuario u = usuariosRegistrados.get(matricula);
     	
@@ -61,6 +63,15 @@ public class GestorUsuarios {
     	
     	//Matricula o contraseña incorrecta
     	return null;
+    }
+    
+    // =========================================================================
+    // BÚSQUEDA RÁPIDA DE USUARIO
+    // =========================================================================
+    
+    public Usuario buscarPorMatricula(String matricula) {
+        // Como usamos un HashMap, no necesitamos un ciclo 'for'
+        return usuariosRegistrados.get(matricula);
     }
     
     // =========================================================================

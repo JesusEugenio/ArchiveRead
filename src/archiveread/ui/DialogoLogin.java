@@ -28,7 +28,7 @@ public class DialogoLogin extends JDialog {
         
         JButton btnEntrar = new JButton("Entrar");
         btnEntrar.addActionListener(e -> {
-            Usuario u = gestorUsuarios.validarUsuario(txtMatricula.getText(), new String(txtPassword.getPassword()));
+            Usuario u = gestorUsuarios.validarCredenciales(txtMatricula.getText(), new String(txtPassword.getPassword()));
             if (u != null) {
                 // Consumer funciona como Runnable, la diferencia es que Consumer si envia parametros para ejecutar una accion
             	onLoginExitoso.accept(u); // Ejecuta la accion aqui 

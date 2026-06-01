@@ -9,7 +9,7 @@ import javax.swing.border.LineBorder;
 public class UIUtils {
 	
 	// Es el encargado de crear el texto para la UI y que tenga la fuente personalizada
-	public static JLabel crearLabel(String texto, Font fuente, Color colorTexto) {
+	public static JLabel crearLabel(String texto, Font fuente, float size, Color colorTexto) {
 		JLabel lbl = new JLabel(texto);
 		lbl.setFont(fuente.deriveFont(size));
 		lbl.setForeground(colorTexto);
