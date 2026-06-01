@@ -3,6 +3,7 @@ package archiveread.gestores;
 import archiveread.modelos.*;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 // =========================================================================
 //	CLASE: GESTOR DE USUARIOS
@@ -10,59 +11,81 @@ import java.util.ArrayList;
 // =========================================================================
 
 public class GestorUsuarios {
-    private ArrayList<Usuario> usuariosRegistrados;
+    private HashMap<String, Usuario> usuariosRegistrados;		//HashMap para buscar usuarios por matricula
     private final String ARCHIVO_USUARIOS = "usuarios.dat";
+    
 
     public GestorUsuarios() {
-        usuariosRegistrados = new ArrayList<>();
-        cargarUsuariosBinario();
-    }
-
-    @SuppressWarnings("unchecked")
-    private void cargarUsuariosBinario() {
-        File archivo = new File(ARCHIVO_USUARIOS);
-        if (!archivo.exists()) {
-            usuariosRegistrados.add(new Administrador("admin", "admin123", "Administrador"));
-            usuariosRegistrados.add(new Lector("548821", "1234", "Jesus Eugenio"));
-            guardarUsuariosBinario();
-            return;
+        usuariosRegistrados = new HashMap<>();
+        cargarUsuarios();
+        
+        
+        //En la primera ejecucion (sin usuarios), creamos al admin
+        if(usuariosRegistrados.isEmpty()) {
+        	Administrador adminPorDefecto = new Administrador("admin", "admin123", "Administrador");
+        	usuariosRegistrados.put(adminPorDefecto.getMatricula(), adminPorDefecto);
+        	guardarUsuarios();	
         }
         
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(archivo))) {
-            usuariosRegistrados = (ArrayList<Usuario>) ois.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void guardarUsuariosBinario() {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(ARCHIVO_USUARIOS))) {
-            oos.writeObject(usuariosRegistrados);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public Usuario validarUsuario(String matricula, String password) {
-        for (Usuario u : usuariosRegistrados) {
-            if (u.getMatricula().equals(matricula) && u.getPassword().equals(password)) return u;
-        }
-        return null;
     }
     
-    public Usuario buscarPorMatricula(String matricula) {
-        for (Usuario u : usuariosRegistrados) {
-            if (u.getMatricula().equals(matricula)) return u;
-        }
-        return null;
+    // =========================================================================
+    // REGISTRAR LECTOR (crear cuenta)
+    // ==========================================================================
+    
+    public boolean registrarLector(String matricula, String password, String nombre) {
+    	//Si la matricula ya existe, rechaza el registro
+    	if(usuariosRegistrados.containsKey(matricula)) {
+    		return false;
+    	}
+    	
+    	//Instancia el lector usando su constructor 
+    	Lector nuevoLector = new Lector(matricula, password, nombre);
+    	usuariosRegistrados.put(matricula, nuevoLector);
+    	guardarUsuarios();
+    	return true;
+    	
     }
+    
+    // =========================================================================
+    // INICIAR SESIÓN
+    // ==========================================================================
+    
+    public Usuario validarCredenciales(String matricula, String password) {
+    	Usuario u = usuariosRegistrados.get(matricula);
+    	
+    	//Usamos getPassword() de la clase Usuario
+    	if(u != null && u.getPassword().equals(password)) {
+    		return u;
+    	}
+    	
+    	//Matricula o contraseña incorrecta
+    	return null;
+    }
+    
+    // =========================================================================
+    // 	PERSISTENCIA (Guardar y Cargar .dat)
+    // ==========================================================================
+    
+    private void guardarUsuarios() {
+    	try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(ARCHIVO_USUARIOS))){
+    		oos.writeObject(usuariosRegistrados);
+    	}catch(IOException e) {
+    		System.err.println("Error al guardar usuarios: " + e.getMessage());
+    	}
+    }
+    
 
-    public boolean registrarNuevoUsuario(Usuario nuevoUsuario) {
-        for (Usuario u : usuariosRegistrados) {
-            if (u.getMatricula().equals(nuevoUsuario.getMatricula())) return false; 
+    @SuppressWarnings("unchecked")
+    private void cargarUsuarios() {
+        File archivo = new File(ARCHIVO_USUARIOS);
+        if (archivo.exists()) {
+        	try(ObjectInputStream ois = new ObjectInputStream(new FileInputStream(archivo))){
+        		usuariosRegistrados = (HashMap<String, Usuario>) ois.readObject();
+        	}catch(IOException | ClassNotFoundException e) {
+        		System.err.println("Error al cargar usuarios: " + e.getMessage());
+        		usuariosRegistrados = new HashMap<>();
+        	}
         }
-        usuariosRegistrados.add(nuevoUsuario);
-        guardarUsuariosBinario();
-        return true;
     }
 }
