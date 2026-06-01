@@ -100,7 +100,6 @@ public class UIUtils {
         combo.setForeground(PaletaColores.TEXTO_NEGRO);
         combo.setFont(CargarFuente.getRegular(14f));
         combo.setBorder(BorderFactory.createLineBorder(PaletaColores.BORDE_CLARO, 1));
-        combo.setFocusable(false); // Quita el recuadro punteado al hacer clic
         
         // Modificamos cómo se dibujan las celdas de la lista al abrirse
         combo.setRenderer(new javax.swing.DefaultListCellRenderer() {
@@ -134,7 +133,7 @@ public class UIUtils {
     }
     
     
-    // Genera un campo de texto para areas donde el usuario tiene que escribir+
+    // Genera un campo de texto para areas donde el usuario tiene que escribir
     public static JTextField crearTextFieldFormulario() {
     	JTextField txt = new JTextField();
     	txt.setFont(CargarFuente.getRegular(14f));
