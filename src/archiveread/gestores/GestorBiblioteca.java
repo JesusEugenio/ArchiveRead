@@ -88,4 +88,36 @@ public class GestorBiblioteca {
             inventario = (ArrayList<Libro>) ois.readObject();
         } catch (IOException | ClassNotFoundException e) { e.printStackTrace(); }
     }
+    
+    
+    // Generador de ID seguro - Evitamos colisiones al eliminar libros
+    public String generarSiguienteId() {
+    	int maxId = 0;
+    	
+    	// Recorremos todos los libros guardados 
+    	for (Libro libro : obtenerLibros()) {
+    		try {
+    			String numeroTexto = libro.getIdLibro().substring(1);
+    			int numeroActual = Integer.parseInt(numeroTexto);
+    			
+    			// Si este numero es mas grande que nuestro maxID, lo actualizamos
+    			if(numeroActual > maxId) {
+    				maxId = numeroActual;
+    			}
+    			
+    		} catch (Exception e) {
+    			
+    			// Si algun libro tiene un ID corrupto, lo ignoramos 
+    			
+    		}
+    		
+    	}
+    	
+    	int siguienteNumero = maxId + 1;
+    	
+    	// String.format("%03") obliga a que el numero siempre tenga al menos 3 numeros, rellenando lo faltante con 0
+    	return "L" + String.format("%03", siguienteNumero);
+    		
+    }
+    
 }
