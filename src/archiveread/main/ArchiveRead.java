@@ -129,7 +129,19 @@ public class ArchiveRead extends JFrame {
     // =========================================================================
     
     private void abrirDialogoLogin() {
-    	
+    		DialogoLogin dialogLogin = new DialogoLogin(this, gestorUsuarios);
+    		dialogLogin.setVisible(true);
+    		
+    		Usuario u = dialogLogin.getUsuarioAutentificado();
+    		
+    		//Si el usuario se logeó bien
+    		if(u != null) {
+    			usuarioActual = u;
+    			actualizarHeader();
+    			mostrarCatalogo("Todas");
+    		}
+    		
+    		//Su u es nulo, no hace nada
     }
     
     // Cerramos sesion y regresamos la interfaz al modo invitado

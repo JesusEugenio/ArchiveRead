@@ -106,7 +106,7 @@ public class DialogoLogin extends JDialog {
 		pnlCentro.add(Box.createVerticalStrut(20));
 		
 		// --- TEXTO PARA CREAR CUENTA NUEVA ---
-		JLabel lblRegistro = UIUtils.crearLabel("¿No tienes cuanta?", CargarFuente.REGULAR, 13f, Color.GRAY);
+		JLabel lblRegistro = UIUtils.crearLabel("¿No tienes cuenta?", CargarFuente.REGULAR, 13f, Color.GRAY);
 		lblRegistro.setAlignmentX(Component.CENTER_ALIGNMENT);
 		lblRegistro.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		
