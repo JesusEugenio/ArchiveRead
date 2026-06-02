@@ -14,7 +14,7 @@ public class DialogoRegistro extends JDialog {
     public DialogoRegistro(JDialog parent, GestorUsuarios gestorUsuarios) {
         // Modalidad activada para bloquear el Login de fondo
         super(parent, "Registro de Nuevo Usuario", true);
-        setSize(400, 450); 
+        setSize(400, 380); 
         setLocationRelativeTo(parent);
         setResizable(false);
         setLayout(new BorderLayout());
@@ -46,6 +46,7 @@ public class DialogoRegistro extends JDialog {
         gbc.gridx = 1; gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.WEST;
         JTextField txtNombre = new JTextField();
+        txtNombre.setFont(CargarFuente.getRegular(14f));
         txtNombre.setPreferredSize(new Dimension(200, 30));
         txtNombre.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY), new EmptyBorder(5, 8, 5, 8)));
         pnlFormulario.add(txtNombre, gbc);
@@ -58,6 +59,7 @@ public class DialogoRegistro extends JDialog {
         gbc.gridx = 1; gbc.gridy = 1;
         gbc.anchor = GridBagConstraints.WEST;
         JTextField txtMatricula = new JTextField();
+        txtMatricula.setFont(CargarFuente.getRegular(14f));
         txtMatricula.setPreferredSize(new Dimension(200, 30));
         txtMatricula.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY), new EmptyBorder(5, 8, 5, 8)));
         pnlFormulario.add(txtMatricula, gbc);
@@ -80,7 +82,7 @@ public class DialogoRegistro extends JDialog {
         // --- BOTON REGISTRARSE ---
         JButton btnRegistrar = UIUtils.crearBotonEstandar("Registrarse", PaletaColores.PRIMARIO, Color.WHITE);
         btnRegistrar.setAlignmentX(Component.CENTER_ALIGNMENT);
-        btnRegistrar.setPreferredSize(new Dimension(160, 45));
+        btnRegistrar.setPreferredSize(new Dimension(150, 45));
         btnRegistrar.setMaximumSize(new Dimension(160, 45));
         
         btnRegistrar.addActionListener(e -> {

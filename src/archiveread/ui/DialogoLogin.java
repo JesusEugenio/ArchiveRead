@@ -22,7 +22,7 @@ public class DialogoLogin extends JDialog {
 		super(padre, "Acceso al Sistema", true);
 		
 		// Centra la ventana y evita que el usuario la haga grande o chica
-		setSize(380, 400);
+		setSize(380, 320);
 		setLocationRelativeTo(padre);
 		setResizable(false);
 		setLayout(new BorderLayout());
@@ -38,16 +38,16 @@ public class DialogoLogin extends JDialog {
 		JLabel lblTitulo = UIUtils.crearLabel("Iniciar Sesión", CargarFuente.BOLD, 24f, PaletaColores.TEXTO_NEGRO);
 		lblTitulo.setAlignmentX(Component.CENTER_ALIGNMENT);
 		pnlCentro.add(lblTitulo);
-		pnlCentro.add(Box.createVerticalStrut(30));
+		pnlCentro.add(Box.createVerticalStrut(15));
 		
 		// --- Cajitas de Texto (Formulario) ---
 		JPanel pnlFormulario = new JPanel(new GridBagLayout());
 		pnlFormulario.setBackground(Color.WHITE);
-		GridBagConstraints gbc = new GridBagConstraints();
+		GridBagConstraints gbc = new GridBagConstraints(); // GridBagConstraints ayuda a los botones y cajas de texto acomodarse en un lugar adecuado
 		gbc.insets = new Insets(12, 10, 12, 10);
 		
 		// --- Fila de la Matricula ---
-		gbc.gridx = 0;
+		gbc.gridx = 0; 
 		gbc.gridy = 0;
 		gbc.anchor = GridBagConstraints.EAST;
 		pnlFormulario.add(UIUtils.crearLabel("Matricula:", CargarFuente.REGULAR, 16f, PaletaColores.TEXTO_NEGRO), gbc);
@@ -56,6 +56,7 @@ public class DialogoLogin extends JDialog {
 		gbc.gridy = 0;
 		gbc.anchor = GridBagConstraints.WEST;
 		JTextField txtMatricula = new JTextField();
+		txtMatricula.setFont(CargarFuente.getRegular(14f));
 		txtMatricula.setPreferredSize(new Dimension(200, 30));
 		txtMatricula.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY), new EmptyBorder(5, 8, 5, 8)));
 		pnlFormulario.add(txtMatricula, gbc);
@@ -76,7 +77,7 @@ public class DialogoLogin extends JDialog {
 		
 		//Se mete la tabla a la caja principal
 		pnlCentro.add(pnlFormulario);
-		pnlCentro.add(Box.createVerticalStrut(25));
+		pnlCentro.add(Box.createVerticalStrut(10));
 		
 		// --- BOTON ENTRAR ---
 		JButton btnEntrar = UIUtils.crearBotonEstandar("Entrar", PaletaColores.PRIMARIO, Color.WHITE);
@@ -103,7 +104,7 @@ public class DialogoLogin extends JDialog {
 		});
 		
 		pnlCentro.add(btnEntrar);
-		pnlCentro.add(Box.createVerticalStrut(20));
+		pnlCentro.add(Box.createVerticalStrut(15));
 		
 		// --- TEXTO PARA CREAR CUENTA NUEVA ---
 		JLabel lblRegistro = UIUtils.crearLabel("¿No tienes cuenta?", CargarFuente.REGULAR, 13f, Color.GRAY);
