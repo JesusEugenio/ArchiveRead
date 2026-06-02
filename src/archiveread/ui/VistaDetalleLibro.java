@@ -23,17 +23,19 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import javax.swing.text.Utilities;
 
 import archiveread.modelos.*;
 import archiveread.utils.*;
 
 import java.util.function.BiConsumer;
+import java.util.function.Consumer; 
+import javax.swing.JOptionPane;
 
 public class VistaDetalleLibro extends JPanel {
 	
 	public VistaDetalleLibro(Libro libro, Usuario usuarioActual, Runnable onVolverCatalogo, Runnable onRentarLibro, 
-							Runnable onDevolverLibro, Runnable onToggleGuardar, BiConsumer<JPanel, Libro> cargarReviewsAction) {
+							Runnable onDevolverLibro, Runnable onToggleGuardar, BiConsumer<JPanel, Libro> cargarReviewsAction,
+							Consumer<String> onGuardarReview) {
 		
 		setLayout(new BorderLayout());
 		setBackground(PaletaColores.FONDO_PRINCIPAL);

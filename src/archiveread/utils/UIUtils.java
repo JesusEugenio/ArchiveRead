@@ -126,7 +126,7 @@ public class UIUtils {
     // Cuando hay campos que rellenar se utiliza esta funcion para que el usuario sepa que tiene que escribir ahi
     public static JLabel crearEtiquetaVacia(String texto) {
     	JLabel lblVacio = new JLabel(texto);
-    	lblVacio.setFont(CargarFuente.getRegular(14f));
+    	lblVacio.setFont(CargarFuente.getItalic(14f));
     	lblVacio.setBorder(new EmptyBorder(0, 10, 0,0 ));
     	lblVacio.setAlignmentX(Component.LEFT_ALIGNMENT);
     	return lblVacio;

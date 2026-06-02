@@ -12,6 +12,8 @@ import archiveread.ui.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.util.function.BiConsumer;
+
 import javax.swing.*;
 
 
@@ -185,10 +187,10 @@ public class ArchiveRead extends JFrame {
     	cambiarVista(new VistaDetalleLibro(
     			libro,
     			usuarioActual, 
-    			() -> mostrarCatalogo("Todas"), 
-    			() -> {rentarLibro(libro); mostrarDetalleLibro(libro); }, 
-    			() -> {devolverLibro(libro); mostrarDetalleLibro(libro); }, 
-    			() -> {
+    			() -> mostrarCatalogo("Todas"), // Runnable onVolverCatalogo
+    			() -> {rentarLibro(libro); mostrarDetalleLibro(libro); }, // Runnable onRentarLibro
+    			() -> {devolverLibro(libro); mostrarDetalleLibro(libro); }, // Runnable onDevolverLibro
+    			() -> { // Runnable onToggleGuardar
     				if (usuarioActual == null) {
     					abrirDialogoLogin();
     				} else {
@@ -197,7 +199,31 @@ public class ArchiveRead extends JFrame {
     					mostrarDetalleLibro(libro);
     				}
     			}, 
-    			(panelLista, lib) -> gestorReviews.cargarReviews(lib, panelLista)	
+    			// BiConsumer<JPanel, Libro> cargarReviewsAction
+    			(panelLista, lib) -> gestorReviews.cargarReviews(lib, panelLista),
+    			
+    			// Consumer<String> onGuardarReview
+    			textoReview -> {
+    			    // Si el usuario le dio clic a "Iniciar Sesion" en el modo invitado, lo pausamos y pedimos login
+    			    if (usuarioActual == null) {
+    			        abrirDialogoLogin(); 
+    			    }
+    			    
+    			    // Si hay un usuario activo 
+    			    if (usuarioActual != null && !textoReview.isEmpty()) {
+    			        
+    			        // Convertimos los saltos de linea en espacios
+    			        // Como nuestro Gestor guarda usando formato "Nombre|||Texto", un salto de línea 
+    			        // corromperia el .txt, lo prevenimos
+    			        String textoLimpio = textoReview.replace("\n", " ").replace("\r", " ");
+    			        
+    			        // Le pasamos el texto limpio a nuestro Gestor para que lo escriba en el disco duro
+    			        gestorReviews.guardarReview(libro, usuarioActual.getNombre(), textoLimpio);
+    			    }
+    			    
+    			    // Recargamos la misma pantalla para que el nuevo comentario aparezca al instante
+    			    mostrarDetalleLibro(libro);
+    			}
     	));
     }
     
