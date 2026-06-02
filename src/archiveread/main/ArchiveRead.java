@@ -193,22 +193,27 @@ public class ArchiveRead extends JFrame {
     	panelPrincipal.repaint();
     }
     
-    // Crea la pantalla de detalles de un libro especifico y la muestra
+    // Si la interfaz no nos dice que empecemos en la pestaña de reviews, mostramos la interfaz por defecto en sinopsis
     public void mostrarDetalleLibro(Libro libro) {
+        mostrarDetalleLibro(libro, false);
+    }
+    
+    // SobreCarga = Crea la pantalla de detalles de un libro especifico y la muestra, sabe en que pestaña esta (sinopsis / reviews)
+    public void mostrarDetalleLibro(Libro libro, boolean abrinOnReviews) {
     	// Pasamos todos los eventos hacia la vista de detalles
     	cambiarVista(new VistaDetalleLibro(
     			libro,
     			usuarioActual, 
     			() -> mostrarCatalogo("Todas"), // Runnable onVolverCatalogo
-    			() -> {rentarLibro(libro); mostrarDetalleLibro(libro); }, // Runnable onRentarLibro
-    			() -> {devolverLibro(libro); mostrarDetalleLibro(libro); }, // Runnable onDevolverLibro
+    			() -> {rentarLibro(libro); mostrarDetalleLibro(libro, abrinOnReviews); }, // Runnable onRentarLibro
+    			() -> {devolverLibro(libro); mostrarDetalleLibro(libro, abrinOnReviews); }, // Runnable onDevolverLibro
     			() -> { // Runnable onToggleGuardar
     				if (usuarioActual == null) {
     					abrirDialogoLogin();
     				} else {
     					libro.toggleGuardado(usuarioActual.getMatricula());
     					gestorBiblioteca.actualizarLibro();
-    					mostrarDetalleLibro(libro);
+    					mostrarDetalleLibro(libro, abrinOnReviews);
     				}
     			}, 
     			// BiConsumer<JPanel, Libro> cargarReviewsAction
@@ -234,8 +239,9 @@ public class ArchiveRead extends JFrame {
     			    }
     			    
     			    // Recargamos la misma pantalla para que el nuevo comentario aparezca al instante
-    			    mostrarDetalleLibro(libro);
-    			}
+    			    mostrarDetalleLibro(libro, true);
+    			},
+    			abrinOnReviews
     	));
     }
     

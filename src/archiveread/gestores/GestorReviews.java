@@ -57,11 +57,8 @@ public class GestorReviews {
                     item.setBackground(Color.WHITE);
                     
                     item.setBorder(BorderFactory.createCompoundBorder(
-                        BorderFactory.createEmptyBorder(0, 0, 15, 0),
-                        BorderFactory.createCompoundBorder(
                                 new LineBorder(PaletaColores.BORDE_CLARO, 1),
                                 new EmptyBorder(15, 15, 15, 15)
-                        )
                     ));
                     item.setAlignmentX(Component.LEFT_ALIGNMENT);
                     item.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
@@ -72,6 +69,7 @@ public class GestorReviews {
                     lblUser.setForeground(Color.BLACK);
                     
                     JTextArea txtTexto = new JTextArea(partes[1]);
+                    txtTexto.setFont(CargarFuente.getRegular(14f));
                     txtTexto.setForeground(PaletaColores.TEXTO_GRIS_OSCURO);
                     txtTexto.setLineWrap(true);
                     txtTexto.setWrapStyleWord(true);
@@ -82,12 +80,15 @@ public class GestorReviews {
                     item.add(txtTexto, BorderLayout.CENTER);
                     
                     panelLista.add(item);
+                    panelLista.add(Box.createVerticalStrut(15));
                     hayReviews = true;
                 }
             }
             
             if (!hayReviews) {
-                panelLista.add(UIUtils.crearEtiquetaVacia("Aun no hay reviews. !Sé el primero en opinar!"));
+            	JLabel lblVacio = UIUtils.crearEtiquetaVacia("Aun no hay reviews. Se el primero en opinar!");
+                lblVacio.setAlignmentX(Component.LEFT_ALIGNMENT);
+                panelLista.add(lblVacio);
             }
             
         } catch(IOException e) {

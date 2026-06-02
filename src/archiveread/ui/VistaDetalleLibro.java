@@ -35,7 +35,7 @@ public class VistaDetalleLibro extends JPanel {
 	
 	public VistaDetalleLibro(Libro libro, Usuario usuarioActual, Runnable onVolverCatalogo, Runnable onRentarLibro, 
 							Runnable onDevolverLibro, Runnable onToggleGuardar, BiConsumer<JPanel, Libro> cargarReviewsAction,
-							Consumer<String> onGuardarReview) {
+							Consumer<String> onGuardarReview, boolean abrirOnReviews) {
 		
 		setLayout(new BorderLayout());
 		setBackground(PaletaColores.FONDO_PRINCIPAL);
@@ -150,7 +150,8 @@ public class VistaDetalleLibro extends JPanel {
         JPanel pnlIzquierda = new JPanel(new BorderLayout());
         pnlIzquierda.setBackground(PaletaColores.FONDO_PRINCIPAL);
         
-        JPanel pnlTabs = new JPanel(new FlowLayout(FlowLayout.LEFT, 30, 0));
+        pnlIzquierda.setBorder(new EmptyBorder(0, 0, 0, 40));
+        JPanel pnlTabs = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         pnlTabs.setBackground(PaletaColores.FONDO_PRINCIPAL);
         pnlTabs.setBorder(new EmptyBorder(0, 0, 15, 0));
         
@@ -163,6 +164,7 @@ public class VistaDetalleLibro extends JPanel {
         lblTabReviews.setCursor(new Cursor(Cursor.HAND_CURSOR));
         
         pnlTabs.add(lblTabSinopsis);
+        pnlTabs.add(Box.createHorizontalStrut(15));
         pnlTabs.add(lblTabReviews);
         
         JPanel pnlCards = new JPanel(new CardLayout());
@@ -180,9 +182,11 @@ public class VistaDetalleLibro extends JPanel {
         txtSinopsis.setForeground(PaletaColores.TEXTO_GRIS_OSCURO); 
         cardSinopsis.add(txtSinopsis, BorderLayout.NORTH);
         
-        // Pestaña 2: Reviews 
+        // Pestaña 2: Reviews - Nuevo Contenido
         JPanel cardReviews = new JPanel(new BorderLayout(0, 10));
         cardReviews.setBackground(PaletaColores.FONDO_PRINCIPAL);
+        
+        // Contenedor de las reseñas existentes
         JPanel listaReviews = new JPanel();
         listaReviews.setLayout(new BoxLayout(listaReviews, BoxLayout.Y_AXIS));
         listaReviews.setBackground(PaletaColores.FONDO_PRINCIPAL);
@@ -191,13 +195,81 @@ public class VistaDetalleLibro extends JPanel {
         // y nuestro libro al Main, para que el Gestor los lea y nos devuelva el panel relleno con las reseñas
         cargarReviewsAction.accept(listaReviews, libro);
         
+        JPanel contenedorAlineadoArriba = new JPanel(new BorderLayout());
+        contenedorAlineadoArriba.setBackground(PaletaColores.FONDO_PRINCIPAL);
+        contenedorAlineadoArriba.add(listaReviews, BorderLayout.NORTH);
+        
         // Envolvemos las Reviews en un Scroll en caso de ser muchas
-        JScrollPane scrollReviews = new JScrollPane(listaReviews);
+        JScrollPane scrollReviews = new JScrollPane(contenedorAlineadoArriba);
         scrollReviews.setBorder(null);
         scrollReviews.getViewport().setBackground(PaletaColores.FONDO_PRINCIPAL);
         scrollReviews.getVerticalScrollBar().setUI(new ScrollModernoUI());
         scrollReviews.getVerticalScrollBar().setPreferredSize(new Dimension(14, 0));
         cardReviews.add(scrollReviews, BorderLayout.CENTER);
+        
+        // Espacio/Caja para escribir reviews
+        JPanel pnlEscribirReview = new JPanel(new BorderLayout(0, 10)); // 10 es  la separacion vertical
+        pnlEscribirReview.setBackground(PaletaColores.FONDO_PRINCIPAL);
+        pnlEscribirReview.setBorder(new EmptyBorder(20, 0, 0, 0));
+        
+        if(usuarioActual != null) {
+        	JTextArea txtNuevaReview = new JTextArea(2, 20);
+        	txtNuevaReview.setLineWrap(true);
+        	txtNuevaReview.setWrapStyleWord(true);
+        	txtNuevaReview.setFont(CargarFuente.getRegular(14f));
+        	
+        	// Borde del txtArea
+        	txtNuevaReview.setBorder(BorderFactory.createCompoundBorder(
+        			new LineBorder(PaletaColores.BORDE_CLARO, 1, true),
+        			new EmptyBorder(12, 12, 12, 12)
+        	));
+        	
+        	JScrollPane scrollNuevaReview = new JScrollPane(txtNuevaReview);
+        	scrollNuevaReview.getVerticalScrollBar().setUI(new ScrollModernoUI());
+        	scrollNuevaReview.getVerticalScrollBar().setPreferredSize(new Dimension(10, 0));
+        	scrollNuevaReview.setBorder(null);
+        	
+        	JButton btnEnviar = UIUtils.crearBotonEstandar("Enviar");
+        	btnEnviar.setPreferredSize(new Dimension(100, 35));
+        	
+        	btnEnviar.addActionListener(e -> {
+        		String texto = txtNuevaReview.getText().trim();
+        		
+        		if(texto.isEmpty()) {
+        			JOptionPane.showMessageDialog(this, "La reseña no puede estar vacia", "Aviso", JOptionPane.WARNING_MESSAGE);
+        			return;
+        		}
+        		onGuardarReview.accept(texto); // La vista envia la review al Main para que el la maneje
+        	});
+        	
+        	// Agreguemos la caja de texto al centro
+        	pnlEscribirReview.add(scrollNuevaReview, BorderLayout.CENTER);
+        	
+        	// Colocamos el boton enviar en el panel
+        	JPanel pnlBoton = new JPanel(new FlowLayout(FlowLayout.RIGHT, 0, 0));
+        	pnlBoton.setBackground(PaletaColores.FONDO_PRINCIPAL);
+        	pnlBoton.add(btnEnviar);
+        	
+        	pnlEscribirReview.add(pnlBoton, BorderLayout.SOUTH);
+       	
+        } else {
+        	// El Usuario esta en modo invitado
+        	JLabel lblInvitado = UIUtils.crearLabel("Inicia Sesion para dejar una reseña", CargarFuente.ITALIC, 14f, PaletaColores.TEXTO_GRIS_OSCURO);
+        	JButton btnLoginReview = UIUtils.crearBotonEstandar("Iniciar Sesion");
+        	
+        	// El Main detecta que no hay usuario registrado, pide login y si es exitoso el "" nos ayuda a que no guarde un texto vacio en las reviews
+        	btnLoginReview.addActionListener(e -> onGuardarReview.accept(""));
+        	
+        	JPanel pnlInvitado = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 0));
+        	pnlInvitado.setBackground(PaletaColores.FONDO_PRINCIPAL);
+        	pnlInvitado.add(lblInvitado);
+        	pnlInvitado.add(btnLoginReview);
+        	
+        	pnlEscribirReview.add(pnlInvitado, BorderLayout.CENTER);
+        	
+        }
+        
+        cardReviews.add(pnlEscribirReview, BorderLayout.SOUTH);
         
         pnlCards.add(cardSinopsis, "SINOPSIS");
         pnlCards.add(cardReviews, "REVIEWS");
@@ -306,6 +378,15 @@ public class VistaDetalleLibro extends JPanel {
         SwingUtilities.invokeLater(() -> scrollGeneralDetalles.getVerticalScrollBar().setValue(0));
         add(scrollGeneralDetalles, BorderLayout.CENTER);
         
+        if (abrirOnReviews) {
+        	// Cambiamos el CardLayout visible
+        	cl.show(pnlCards, "REVIEWS");
+            lblTabReviews.setForeground(Color.BLACK);
+            lblTabReviews.setBorder(BorderFactory.createMatteBorder(0, 0, 4, 0, PaletaColores.PRIMARIO));
+            
+            // Apagamos visualmente el texto de "Sinopsis" (Añadirle un tono oscuro)
+            lblTabSinopsis.setForeground(Color.GRAY);
+            lblTabSinopsis.setBorder(BorderFactory.createEmptyBorder(0, 0, 4, 0));
+        }
 	}       
-
 }
