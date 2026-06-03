@@ -6,6 +6,7 @@ import archiveread.utils.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
 // ===================
 // Esta clase dibuja la parte superior de la app (Titulo de la app, donde inicias sesion, etc.)
@@ -18,8 +19,12 @@ public class PanelHeader extends JPanel {
 		// Runnables : Header no sabe que pasa cuando hacemos click en esas partes, solo sabe que debe ejecutar la accion que le mandaron
 		
 		setLayout(new BorderLayout());
+		setPreferredSize(new Dimension(700, 60));
 		setBackground(PaletaColores.BLANCO);
-		setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, PaletaColores.BORDE_CLARO));
+		setBorder(BorderFactory.createCompoundBorder(
+				BorderFactory.createMatteBorder(0, 0, 1, 0, PaletaColores.BORDE_CLARO), 
+				new EmptyBorder(5, 20, 0, 20)                                          
+		));
 		
 		JPanel pnlIzquierda = new JPanel(new FlowLayout(FlowLayout.LEFT, 25, 10));
         pnlIzquierda.setBackground(PaletaColores.BLANCO);
