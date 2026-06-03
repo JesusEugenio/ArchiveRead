@@ -23,10 +23,12 @@ import java.util.ArrayList;
 import java.util.function.Consumer;
 
 public class VistaMiBiblioteca extends JPanel{
+
 	public VistaMiBiblioteca(Usuario usuarioActual, ArrayList<Libro> librosRentados, ArrayList<Libro> librosGuardados,
 							Runnable onVolverCatalogo,
 							Consumer<Libro> onLibroSeleccionado,
 							Consumer<Libro> onDevolverLibro,
+							Consumer<Libro> onRentarLibro,
 							Consumer<Libro> onQuitarLibro)
 	{
 		setLayout(new BorderLayout());
@@ -149,7 +151,7 @@ public class VistaMiBiblioteca extends JPanel{
 		if(tipoFila.equals("RENTADO") && onDevolver != null) {
 			
 			//Boton Devolver
-			JButton btnDevolver = UIUtils.crearBotonEstandar("Devolver Libro", new Color(192, 57, 43), Color.WHITE);
+			JButton btnDevolver = UIUtils.crearBotonEstandar("Devolver Libro", PaletaColores.BOTON_DEVOLVER, Color.WHITE);
 			btnDevolver.addActionListener(e -> onDevolver.accept(libro));
 			pnlBotones.add(btnDevolver);
 		
@@ -169,7 +171,7 @@ public class VistaMiBiblioteca extends JPanel{
 			pnlBotones.add(btnRentar);
 			
 			// Boton Quitar
-			JButton btnQuitar = UIUtils.crearBotonEstandar("Quitar", new Color(200, 200, 200), PaletaColores.TEXTO_NEGRO);
+			JButton btnQuitar = UIUtils.crearBotonEstandar("Quitar", PaletaColores.BOTON_QUITAR, PaletaColores.TEXTO_NEGRO);
 			btnQuitar.addActionListener(e -> onQuitar.accept(libro));
 			pnlBotones.add(btnQuitar);
 		}
