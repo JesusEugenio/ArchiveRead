@@ -116,7 +116,7 @@ public class GestorBiblioteca {
     	int siguienteNumero = maxId + 1;
     	
     	// String.format("%03") obliga a que el numero siempre tenga al menos 3 numeros, rellenando lo faltante con 0
-    	return "L" + String.format("%03", siguienteNumero);
+    	return "L" + String.format("%03d", siguienteNumero);
     		
     }
     
