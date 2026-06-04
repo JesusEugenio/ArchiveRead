@@ -248,7 +248,53 @@ public class ArchiveRead extends JFrame {
     
     // Metodo para navegar a la biblioteca personal del usuario [EN DESARROLLO]
     public void mostrarMiBiblioteca() {
-        mostrarCatalogo("Todas");
+    	//mostrarCatalogo("Todas");
+    	
+    	// Validar usuario
+    	if(usuarioActual == null) {
+    		abrirDialogoLogin();
+    	}
+    	if(usuarioActual == null) {
+    		return;	//Si cerró el login, cancelamos
+    	}
+    	
+    	//Arreglos con los libros que le pertenecen
+    	ArrayList<Libro> rentados = gestorBiblioteca.obtenerLibrosRentadosPor(usuarioActual.getMatricula());
+    	ArrayList<Libro> guardados = gestorBiblioteca.obtenerLibrosGuardadosPor(usuarioActual.getMatricula());
+       
+    	cambiarVista(new VistaMiBiblioteca(
+    			usuarioActual,
+    			rentados,
+    			guardados,
+    			
+    			//Cable: volver
+    			() -> mostrarCatalogo("Todas"),
+    			
+    			libro -> mostrarDetalleLibro(libro),
+    			
+    			//======================================================
+    			// CABLES DE ACCION DIRECTA
+    			//======================================================
+    			
+    			//Cable: Devolver (Desde la lista de Rentados)
+    			libroParaDevolver -> {
+    				devolverLibro(libroParaDevolver);
+    				//Se recarga la página para que el libro desaparezca de la lista
+    				mostrarMiBiblioteca();
+    			},
+    			
+    			libroParaRentar -> {
+    				rentarLibro(libroParaRentar);
+    				//Al rentarlo, el libro se movera de la lista de abajo hacia la de arriba
+    				mostrarMiBiblioteca();
+    			},
+    			
+    			libroParaQuitar -> {
+    				libroParaQuitar.toggleGuardado(usuarioActual.getMatricula());
+    				gestorBiblioteca.actualizarLibro();	//Se guarda el cambio en el .dat
+    				mostrarMiBiblioteca();
+    			}
+    			));
     }
     
    

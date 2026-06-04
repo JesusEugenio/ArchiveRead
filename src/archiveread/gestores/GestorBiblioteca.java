@@ -120,4 +120,34 @@ public class GestorBiblioteca {
     		
     }
     
+    public ArrayList<Libro> obtenerLibrosRentadosPor(String matricula){
+    		if(inventario == null) {
+    			return null;
+    		}
+    		
+    		ArrayList<Libro> librosRentados = new ArrayList<>();
+    		
+    		for(Libro l : inventario) {
+    			if(l.getMatriculaPrestamo().equals(matricula)) {
+    				librosRentados.add(l);
+    			}
+    		}
+    		return librosRentados;
+    }
+    
+    public ArrayList<Libro> obtenerLibrosGuardadosPor(String matricula){
+		if(inventario == null) {
+			return null;
+		}
+		
+		ArrayList<Libro> librosGuardados = new ArrayList<>();
+		
+		for(Libro l : inventario) {
+			if(l.estaGuardado(matricula)) {
+				librosGuardados.add(l);
+			}
+		}
+		return librosGuardados;
+    }
+    
 }
