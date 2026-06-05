@@ -1,0 +1,8 @@
+========================================
+      REPORTE DE LIBROS PRESTADOS       
+========================================
+Título: Java para Novatos
+Autor: Juan Pérez
+Prestado a (Matrícula): 548821
+Nombre del Lector: Jesus
+------------------------------------------
