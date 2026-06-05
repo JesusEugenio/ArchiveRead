@@ -106,13 +106,15 @@ public class ArchiveRead extends JFrame {
     	// Obtenemos las categorias para el ComboBox del formulario
     	ArrayList<String> categoriasUnicas = gestorBiblioteca.obtenerCategoriasUnicas();
     	
+    	// Generamos el ID del libro en base a cuantos hay (ej. "L005")
+		String nuevoID = gestorBiblioteca.generarSiguienteId();
+    	
     	// Cuando el Administrador da click en "Guardar Libro" dentro de VistaNuevoLibro
     	// la vista nos lanza el objeto libro terminado (a excepcion de ID)
     	// Aqui lo atrapamos (llamado 'nuevoLibro'), le generamos un ID y lo guardamos
-    	cambiarVista(new VistaNuevoLibro(categoriasUnicas, nuevoLibro -> {
+    	cambiarVista(new VistaNuevoLibro(categoriasUnicas, nuevoID,  nuevoLibro -> {
     		
-    		// Generamos el ID del libro en base a cuantos hay (ej. "L005")
-    		String nuevoID = gestorBiblioteca.generarSiguienteId();
+    		// Asignamos el ID generado
     		nuevoLibro.setIdLibro(nuevoID);
     		
     		// Le pedimos al Gestor que guarde el Libro en el archivo .dat
@@ -306,8 +308,16 @@ public class ArchiveRead extends JFrame {
         if (usuarioActual == null) {
             abrirDialogoLogin();
         } else {
+            // Marcamos el libro como no disponible y le asignamos el dueño
             libro.setDisponible(false);
             libro.setMatriculaPrestamo(usuarioActual.getMatricula());
+            
+            // Si el usuario tenía este libro guardado en su lista de deseos, lo quitamos
+            if (libro.estaGuardado(usuarioActual.getMatricula())) {
+                libro.toggleGuardado(usuarioActual.getMatricula());
+            }
+            
+            // Guardamos los cambios en el archivo .dat
             gestorBiblioteca.actualizarLibro();  
         }
     }

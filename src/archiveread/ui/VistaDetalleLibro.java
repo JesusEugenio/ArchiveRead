@@ -119,17 +119,34 @@ public class VistaDetalleLibro extends JPanel {
     	
     	// Boton de Añadir a Biblioteca / Guardado
     	boolean estaGuardado = (usuarioActual != null) && libro.estaGuardado(usuarioActual.getMatricula());
-        JButton btnGuardar = UIUtils.crearBotonEstandar(estaGuardado ? "En Biblioteca" : "Añadir a Biblioteca");
+    	
+    	// Verificamos si este usuario en específico es quien tiene rentado el libro
+        boolean loTieneRentado = (usuarioActual != null) && usuarioActual.getMatricula().equals(libro.getMatriculaPrestamo());
+        
+        JButton btnGuardar = UIUtils.crearBotonEstandar("Añadir a Biblioteca");
         btnGuardar.setPreferredSize(new Dimension(180, 45));
-        btnGuardar.setBackground(estaGuardado ? PaletaColores.BLANCO : PaletaColores.BOTON_OSCURO);
-        btnGuardar.setForeground(estaGuardado ? PaletaColores.PRIMARIO : PaletaColores.BLANCO);
-        btnGuardar.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
-        btnGuardar.addActionListener(e -> onToggleGuardar.run());  	
-       
+
+        if (loTieneRentado) {
+            // Si ya lo tiene rentado, bloqueamos la opcion de Añadir a Biblioteca
+            btnGuardar.setText("En Lectura"); 
+            btnGuardar.setBackground(PaletaColores.BOTON_DESHABILITADO);
+            btnGuardar.setForeground(PaletaColores.TEXTO_GRIS_CLARO);
+            btnGuardar.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
+            btnGuardar.setEnabled(false); // Apagamos el botón por completo
+            
+        } else {
+            // Comportamiento normal (si no lo tiene rentado)
+            btnGuardar.setText(estaGuardado ? "En Biblioteca" : "Añadir a Biblioteca");
+            btnGuardar.setBackground(estaGuardado ? PaletaColores.BLANCO : PaletaColores.BOTON_OSCURO);
+            btnGuardar.setForeground(estaGuardado ? PaletaColores.PRIMARIO : PaletaColores.BLANCO);
+            btnGuardar.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
+            btnGuardar.addActionListener(e -> onToggleGuardar.run());
+        }
+        
         // Agregar los botones al panel
         pnlBotones.add(btnRentar);
         pnlBotones.add(Box.createHorizontalStrut(15));
-        pnlBotones.add(btnGuardar);
+        pnlBotones.add(btnGuardar);  	
         
         pnlInfoBanner.add(Box.createVerticalStrut(40));
         pnlInfoBanner.add(lblTitulo);
@@ -149,6 +166,8 @@ public class VistaDetalleLibro extends JPanel {
         // Dividimos sinopsis y reviews en dos pestañas con el card layout
         JPanel pnlIzquierda = new JPanel(new BorderLayout());
         pnlIzquierda.setBackground(PaletaColores.FONDO_PRINCIPAL);
+        pnlIzquierda.setMinimumSize(new Dimension(400, 300)); 
+        pnlIzquierda.setBorder(new EmptyBorder(0, 0, 0, 40));
         
         pnlIzquierda.setBorder(new EmptyBorder(0, 0, 0, 40));
         JPanel pnlTabs = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -308,6 +327,8 @@ public class VistaDetalleLibro extends JPanel {
         pnlDerecha.setLayout(new BoxLayout(pnlDerecha, BoxLayout.Y_AXIS));
         pnlDerecha.setBackground(PaletaColores.FONDO_PRINCIPAL);
         pnlDerecha.setPreferredSize(new Dimension(320, 400));
+        pnlDerecha.setMinimumSize(new Dimension(320, 0)); // El 0 de altura permite que estire
+        pnlDerecha.setMaximumSize(new Dimension(320, Integer.MAX_VALUE));
         
         // Encabezado del autor
         JLabel lblAutorTitulo = UIUtils.crearLabel("Autor", CargarFuente.BOLD, 18f, PaletaColores.TEXTO_NEGRO);
@@ -326,13 +347,19 @@ public class VistaDetalleLibro extends JPanel {
         lblAcercaTitulo.setBorder(new EmptyBorder(30, 0, 10, 0));
         
         // Creamos la tabla donde esta la ficha tecnica
-        JPanel pnlFichaInfo = new JPanel(new GridLayout(3, 2, 10, 15));
+        JPanel pnlFichaInfo = new JPanel(new GridLayout(3, 2, 10, 5)) {
+            @Override
+            public Dimension getMaximumSize() {
+                // Le decimos a Java: Tu altura maxima es tu altura ideal (PreferredSize)
+                // Si hay pocas categorias, medira aprox 100. Si hay muchas, medira lo que necesite
+                return new Dimension(320, getPreferredSize().height);
+            }
+        };
         pnlFichaInfo.setBackground(PaletaColores.BLANCO);
         
         // Le añadimos un border grisaceo a la tabla
-        pnlFichaInfo.setBorder(BorderFactory.createCompoundBorder(new LineBorder(new Color(220, 220, 220), 1, true), new EmptyBorder(15, 15, 15, 15)));
+        pnlFichaInfo.setBorder(BorderFactory.createCompoundBorder(new LineBorder(PaletaColores.BORDE_CLARO, 1, true), new EmptyBorder(15, 15, 15, 15)));
         pnlFichaInfo.setAlignmentX(Component.LEFT_ALIGNMENT);
-        pnlFichaInfo.setMaximumSize(new Dimension(320, 140));
         
         // Asignamos el contenido a la tabla
         pnlFichaInfo.add(UIUtils.crearLabel("Estado:", CargarFuente.REGULAR, 13f, Color.GRAY));
@@ -344,13 +371,25 @@ public class VistaDetalleLibro extends JPanel {
         pnlFichaInfo.add(UIUtils.crearLabel(String.valueOf(libro.getPaginas()), CargarFuente.REGULAR, 13f, Color.BLACK));
         
         pnlFichaInfo.add(UIUtils.crearLabel("Categorias:", CargarFuente.REGULAR, 13f, Color.GRAY));
-        pnlFichaInfo.add(UIUtils.crearLabel(catsUnidas, CargarFuente.REGULAR, 13f, Color.BLACK));
         
+        // Usamos un JTextArea para las categorías para que haga el salto de linea automatico si hay muchas
+        JTextArea txtCats = new JTextArea(catsUnidas);
+        txtCats.setFont(CargarFuente.getRegular(13f));
+        txtCats.setForeground(Color.BLACK);
+        txtCats.setLineWrap(true);
+        txtCats.setWrapStyleWord(true);
+        txtCats.setEditable(false);
+        txtCats.setOpaque(false);
+        txtCats.setFocusable(false);
+        txtCats.setMinimumSize(new Dimension(0, 0));
+        pnlFichaInfo.add(txtCats);
         
+        // Agrupamo los paneles de la caja
         pnlDerecha.add(lblAutorTitulo);
         pnlDerecha.add(pnlCajaAutor);
         pnlDerecha.add(lblAcercaTitulo);
         pnlDerecha.add(pnlFichaInfo);
+        pnlDerecha.add(Box.createVerticalGlue());
         pnlInferior.add(pnlDerecha, BorderLayout.EAST);
         
         // Agrupamos los paneles verticales

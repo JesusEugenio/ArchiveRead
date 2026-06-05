@@ -15,7 +15,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class VistaNuevoLibro extends JPanel {
 	
-	public VistaNuevoLibro(ArrayList<String> categoriasExistentes, Consumer<Libro> onGuardarLibro) {
+	public VistaNuevoLibro(ArrayList<String> categoriasExistentes, String idAsignado, Consumer<Libro> onGuardarLibro) {
 		setLayout(new BorderLayout());
 		setBackground(PaletaColores.FONDO_PRINCIPAL);
 		
@@ -172,7 +172,7 @@ public class VistaNuevoLibro extends JPanel {
         
         cajaSinopsis.add(UIUtils.crearLabel("Sinopsis", CargarFuente.BOLD, 18f, PaletaColores.TEXTO_NEGRO));
         cajaSinopsis.add(Box.createVerticalStrut(5));
-        cajaSinopsis.add(UIUtils.crearLabel("Las obras con sinopsis se leen mas a menudo...", CargarFuente.REGULAR, 14f, PaletaColores.TEXTO_GRIS_CLARO));
+        cajaSinopsis.add(UIUtils.crearLabel("Las obras con sinopsis se leen mas a menudo...", CargarFuente.ITALIC, 14f, PaletaColores.TEXTO_GRIS_CLARO));
         cajaSinopsis.add(Box.createVerticalStrut(20));
         
         JTextArea txtSinopsisArea = new JTextArea(6, 20);
@@ -228,7 +228,7 @@ public class VistaNuevoLibro extends JPanel {
         		int pagsInt = Integer.parseInt(pags);
         		
         		// Guardamos la portada
-        		String rutaFinalImagen = FileUtils.guardarPortada(rutaImagenSeleccionada[0], titulo);
+        		String rutaFinalImagen = FileUtils.guardarPortada(rutaImagenSeleccionada[0], idAsignado);
         		
         		// Instanciamos el nuevo Libro
         		// No nos corresponde asignar un ID, de eso se encarga el Main, mientras le llamamos n
