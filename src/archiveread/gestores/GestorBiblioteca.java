@@ -29,10 +29,10 @@ public class GestorBiblioteca {
             File carpetaCovers = new File(RUTA_COVERS);
             if (!carpetaCovers.exists()) carpetaCovers.mkdirs(); 
             
-            inventario.add(new Libro("L001", "Java para Novatos", new ArrayList<>(Arrays.asList("Programación")), RUTA_COVERS + "Java_para_Novatos_cover.jpg", "Juan Pérez", 350, sinopsis1));
-            inventario.add(new Libro("L002", "Estructuras de Datos", new ArrayList<>(Arrays.asList("Sistemas")), RUTA_COVERS + "Estructuras_de_Datos_cover.jpg", "María Gómez", 420, sinopsis2));
-            inventario.add(new Libro("L003", "El Señor de los Anillos", new ArrayList<>(Arrays.asList("Fantasía")), RUTA_COVERS + "El_Señor_de_los_Anillos_cover.jpg", "J.R.R. Tolkien", 1200, sinopsis3));
-            inventario.add(new Libro("L004", "Redes de Computadoras", new ArrayList<>(Arrays.asList("Sistemas", "Redes")), RUTA_COVERS + "Redes_de_Computadoras_cover.jpg", "Andrew Tanenbaum", 800, sinopsis4));
+            inventario.add(new Libro("L001", "Java para Novatos", new ArrayList<>(Arrays.asList("Programación")), RUTA_COVERS + "L001_cover.jpg", "Juan Pérez", 350, sinopsis1));
+            inventario.add(new Libro("L002", "Estructuras de Datos", new ArrayList<>(Arrays.asList("Sistemas")), RUTA_COVERS + "L002_cover.jpg", "María Gómez", 420, sinopsis2));
+            inventario.add(new Libro("L003", "El Señor de los Anillos", new ArrayList<>(Arrays.asList("Fantasía")), RUTA_COVERS + "L003_cover.jpg", "J.R.R. Tolkien", 1200, sinopsis3));
+            inventario.add(new Libro("L004", "Redes de Computadoras", new ArrayList<>(Arrays.asList("Sistemas", "Redes")), RUTA_COVERS + "L004_cover.jpg", "Andrew Tanenbaum", 800, sinopsis4));
             
         }
     }
@@ -66,11 +66,23 @@ public class GestorBiblioteca {
     }
 
     public ArrayList<Libro> filtrarPorCategoria(String categoria) {
-        if (categoria.equals("Todas")) return inventario;
-        ArrayList<Libro> resultados = new ArrayList<>();
-        for (Libro l : inventario) {
-            if (l.getCategorias().contains(categoria)) resultados.add(l);
+    	ArrayList<Libro> resultados = new ArrayList<>();
+        
+        // Extraemos los libros (Ya sean todos, o filtrados por categoria)
+        if (categoria.equals("Todas")) {
+            // Hacemos una copia de todo el inventario
+            resultados.addAll(inventario); 
+        } else {
+            // Buscamos solo los que coincidan con la categoría
+            for (Libro l : inventario) {
+                if (l.getCategorias().contains(categoria)) resultados.add(l);
+            }
         }
+        
+        // Volteamos la lista completa. 
+        // Esto hara que los ultimos libros añadidos al sistema ahora queden en la posición 0 (hasta arriba).
+        java.util.Collections.reverse(resultados);
+        
         return resultados;
     }
 
@@ -120,34 +132,32 @@ public class GestorBiblioteca {
     		
     }
     
-    public ArrayList<Libro> obtenerLibrosRentadosPor(String matricula){
-    		if(inventario == null) {
-    			return null;
-    		}
-    		
-    		ArrayList<Libro> librosRentados = new ArrayList<>();
-    		
-    		for(Libro l : inventario) {
-    			if(l.getMatriculaPrestamo().equals(matricula)) {
-    				librosRentados.add(l);
-    			}
-    		}
-    		return librosRentados;
+    // =========================================================================
+    // FILTROS PARA "MI BIBLIOTECA"
+    // =========================================================================
+
+    // Obtiene los libros rentados POR un usuario específico
+    public ArrayList<Libro> obtenerLibrosRentadosPor(String matricula) {
+        ArrayList<Libro> resultados = new ArrayList<>();
+        
+        for (Libro libro : inventario) {
+            // Si NO está disponible y la matrícula del préstamo coincide con la del usuario
+            if (!libro.isDisponible() && matricula.equals(libro.getMatriculaPrestamo())) {
+                resultados.add(libro);
+            }
+        }
+        return resultados;
     }
-    
-    public ArrayList<Libro> obtenerLibrosGuardadosPor(String matricula){
-		if(inventario == null) {
-			return null;
-		}
-		
-		ArrayList<Libro> librosGuardados = new ArrayList<>();
-		
-		for(Libro l : inventario) {
-			if(l.estaGuardado(matricula)) {
-				librosGuardados.add(l);
-			}
-		}
-		return librosGuardados;
+
+    // Obtiene los libros guardados (Lista de deseos) POR un usuario específico
+    public ArrayList<Libro> obtenerLibrosGuardadosPor(String matricula) {
+        ArrayList<Libro> resultados = new ArrayList<>();
+        
+        for (Libro libro : inventario) {
+            if (libro.estaGuardado(matricula)) {
+                resultados.add(libro);
+            }
+        }
+        return resultados;
     }
-    
 }

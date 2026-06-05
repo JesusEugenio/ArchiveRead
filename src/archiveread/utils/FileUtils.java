@@ -28,7 +28,7 @@ public class FileUtils {
     }
 	
 	// Renombra la ruta de la imagen que suba el Administrador y se copia en un directorio
-	public static String guardarPortada(String rutaOrigen, String titulo) {
+	public static String guardarPortada(String rutaOrigen, String idLibro) {
     	if(rutaOrigen == null || rutaOrigen.contains("default.jpg")) {
     		return "covers/default.jpg";
     	}
@@ -46,9 +46,7 @@ public class FileUtils {
     			extension = rutaOrigen.substring(i);
     		}
     		
-    		// Construimos el nuevo nombre seguro (ej. "MiLibroSinEspacios.jpg")
-    		String nombreSeguro = limpiarNombreArchivo(titulo);
-    		String nuevoNombreArchivo = nombreSeguro + "_cover" + extension;
+    		String nuevoNombreArchivo = idLibro + "_cover" + extension;
     		
     		// Nos dirigimos a la carpeta covers del proyecto 
     		File carpetaCovers = new File("covers/");
