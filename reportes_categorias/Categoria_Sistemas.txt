@@ -1,0 +1,4 @@
+--- CATEGORÍA: Sistemas ---
+
+- Redes de Computadoras (Autor: Andrew Tanenbaum)
+- Estructuras de Datos (Autor: María Gómez)
