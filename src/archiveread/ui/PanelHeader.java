@@ -45,8 +45,8 @@ public class PanelHeader extends JPanel {
         // Evaluamos si el usuario que existe es Admin ("Soy Admin.png")
         if (usuarioActual instanceof Administrador) {
         	// Si el usuario es una instancia de Administrador añadimos los siguientes botones solo para el 
-        	pnlIzquierda.add(UIUtils.crearMenuLabel("Añadir Libro", onAnadirLibroClick));
-        	pnlIzquierda.add(UIUtils.crearMenuLabel("ReportePrestamos", onReportePrestamosClick));
+        	pnlIzquierda.add(UIUtils.crearMenuLabel("Añadir Libro ", onAnadirLibroClick));
+        	pnlIzquierda.add(UIUtils.crearMenuLabel("ReportePrestamos ", onReportePrestamosClick));
         }
         
         if (usuarioActual == null) {

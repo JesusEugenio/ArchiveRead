@@ -49,15 +49,11 @@ public class VistaListaLibros extends JPanel {
         scrollPane.setBorder(null);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         scrollPane.getViewport().setBackground(PaletaColores.FONDO_PRINCIPAL);
-        scrollPane.getViewport().setScrollMode(javax.swing.JViewport.SIMPLE_SCROLL_MODE);
+        scrollPane.getViewport().setScrollMode(JViewport.SIMPLE_SCROLL_MODE);
         
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.getVerticalScrollBar().setUI(new ScrollModernoUI()); 
         scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(14, 0));
-        
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.getHorizontalScrollBar().setUI(new ScrollModernoUI());
-        scrollPane.getHorizontalScrollBar().setPreferredSize(new Dimension(0, 13));
         
         // Forzamos el scroll al inicio (arriba)
         SwingUtilities.invokeLater(() -> scrollPane.getVerticalScrollBar().setValue(0));
