@@ -56,6 +56,11 @@ public class ArchiveRead extends JFrame {
 
         // Configuración de la ventana
         setTitle("ArchiveRead");
+        
+        // Cargar Icono de la App
+        Image iconoApp = new ImageIcon("icons/ArchiveRead_icon.png").getImage();
+        setIconImage(iconoApp);
+        
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1024, 720);
         setMinimumSize(new Dimension(800, 600));
@@ -201,21 +206,21 @@ public class ArchiveRead extends JFrame {
     }
     
     // SobreCarga = Crea la pantalla de detalles de un libro especifico y la muestra, sabe en que pestaña esta (sinopsis / reviews)
-    public void mostrarDetalleLibro(Libro libro, boolean abrinOnReviews) {
+    public void mostrarDetalleLibro(Libro libro, boolean abrirOnReviews) {
     	// Pasamos todos los eventos hacia la vista de detalles
     	cambiarVista(new VistaDetalleLibro(
     			libro,
     			usuarioActual, 
     			() -> mostrarCatalogo("Todas"), // Runnable onVolverCatalogo
-    			() -> {rentarLibro(libro); mostrarDetalleLibro(libro, abrinOnReviews); }, // Runnable onRentarLibro
-    			() -> {devolverLibro(libro); mostrarDetalleLibro(libro, abrinOnReviews); }, // Runnable onDevolverLibro
+    			() -> {rentarLibro(libro); mostrarDetalleLibro(libro, abrirOnReviews); }, // Runnable onRentarLibro
+    			() -> {devolverLibro(libro); mostrarDetalleLibro(libro, abrirOnReviews); }, // Runnable onDevolverLibro
     			() -> { // Runnable onToggleGuardar
     				if (usuarioActual == null) {
     					abrirDialogoLogin();
     				} else {
     					libro.toggleGuardado(usuarioActual.getMatricula());
     					gestorBiblioteca.actualizarLibro();
-    					mostrarDetalleLibro(libro, abrinOnReviews);
+    					mostrarDetalleLibro(libro, abrirOnReviews);
     				}
     			}, 
     			// BiConsumer<JPanel, Libro> cargarReviewsAction
@@ -243,7 +248,25 @@ public class ArchiveRead extends JFrame {
     			    // Recargamos la misma pantalla para que el nuevo comentario aparezca al instante
     			    mostrarDetalleLibro(libro, true);
     			},
-    			abrinOnReviews
+    			abrirOnReviews,
+    			// OnEditarLibro
+    			() -> {
+    				DialogoEditarLibro dialogo = new DialogoEditarLibro(this, libro, () -> {
+    					gestorBiblioteca.actualizarLibro(); // Sobreescribimos el archivo inventario.dat
+    					mostrarDetalleLibro(libro);
+    				});
+    				dialogo.setVisible(true);
+    			},
+    			// OnEliminarLibro
+    			() -> {
+    				int confirm = JOptionPane.showConfirmDialog(this, "Estas seguro de eliminar el libro '" + libro.getTitulo() + "'?\nEsta accion no puede revertirse",
+    						"Confirmar Eliminacion", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+    				if (confirm == JOptionPane.YES_OPTION) {
+    					gestorBiblioteca.eliminarLibro(libro);
+    					JOptionPane.showMessageDialog(this, "El libro se elimino correctamente");
+    					mostrarCatalogo("Todas");
+    				}
+    			}
     	));
     }
     
