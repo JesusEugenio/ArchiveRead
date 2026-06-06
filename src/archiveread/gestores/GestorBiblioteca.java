@@ -43,6 +43,13 @@ public class GestorBiblioteca {
     }
 
     public void actualizarLibro() { guardarInventarioBinario(); }
+    
+    public void eliminarLibro(Libro libro) {
+    	if(inventario.contains(libro)) {
+    		inventario.remove(libro);
+    		actualizarLibro(); // Guardamos los cambios en inventario.dat
+    	}
+    }
 
     public ArrayList<Libro> obtenerLibros() { return inventario; }
 

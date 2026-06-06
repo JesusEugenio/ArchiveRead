@@ -29,8 +29,8 @@ public class PaletaColores {
 	public static final Color BOTON_OSCURO = new Color(30, 35, 40); 		// Para "Añadir a Biblioteca"
 	public static final Color BOTON_DESHABILITADO = new Color(60, 60, 60); 	
 	
-	public static final Color BOTON_EDITAR = new Color(52, 152, 219);
-	public static final Color BOTON_ELIMINAR = new Color(231, 76, 60);
+	public static final Color BOTON_EDITAR = new Color(72, 107, 168);
+	public static final Color BOTON_ELIMINAR = new Color(140, 55, 78);
 	
 	public static final Color BOTON_QUITAR = new Color(200, 200, 200);
 	public static final Color BOTON_DEVOLVER = new Color(192, 57, 43);

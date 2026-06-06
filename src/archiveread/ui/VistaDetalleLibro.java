@@ -35,7 +35,7 @@ public class VistaDetalleLibro extends JPanel {
 	
 	public VistaDetalleLibro(Libro libro, Usuario usuarioActual, Runnable onVolverCatalogo, Runnable onRentarLibro, 
 							Runnable onDevolverLibro, Runnable onToggleGuardar, BiConsumer<JPanel, Libro> cargarReviewsAction,
-							Consumer<String> onGuardarReview, boolean abrirOnReviews) {
+							Consumer<String> onGuardarReview, boolean abrirOnReviews, Runnable onEditarLibro, Runnable onEliminar) {
 		
 		setLayout(new BorderLayout());
 		setBackground(PaletaColores.FONDO_PRINCIPAL);
@@ -147,6 +147,23 @@ public class VistaDetalleLibro extends JPanel {
         pnlBotones.add(btnRentar);
         pnlBotones.add(Box.createHorizontalStrut(15));
         pnlBotones.add(btnGuardar);  	
+        
+        // Boton editar y eliminar (Solo para Administradores)
+        if (usuarioActual instanceof Administrador) {
+        	// Boton Editar 
+        	JButton btnEditar = UIUtils.crearBotonEstandar("Editar Libro", PaletaColores.BOTON_EDITAR, PaletaColores.TEXTO_BLANCO);
+        	btnEditar.setPreferredSize(new Dimension(110, 45));
+        	btnEditar.addActionListener(e -> onEditarLibro.run());
+        	pnlBotones.add(Box.createHorizontalStrut(15));
+        	pnlBotones.add(btnEditar);
+        	
+        	// Boton Eliminar
+        	JButton btnEliminar = UIUtils.crearBotonEstandar("Eliminar", PaletaColores.BOTON_ELIMINAR, PaletaColores.TEXTO_BLANCO);
+        	btnEliminar.setPreferredSize(new Dimension(110, 45));
+        	btnEliminar.addActionListener(e -> onEliminar.run()); 
+        	pnlBotones.add(Box.createHorizontalStrut(15));
+        	pnlBotones.add(btnEliminar);
+        }
         
         pnlInfoBanner.add(Box.createVerticalStrut(40));
         pnlInfoBanner.add(lblTitulo);
