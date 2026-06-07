@@ -5,22 +5,21 @@ import java.io.*;
 import java.util.HashMap;
 
 // =========================================================================
-//	CLASE: GESTOR DE USUARIOS
-//	Encargada de leer y escribir 'usuarios.dat'
+//	--- Gestor de Usuarios ---
+//	Controla el registro, el login y la carga/guardado de los usuarios en "usuarios.dat"
 // =========================================================================
 
 public class GestorUsuarios {
-    private HashMap<String, Usuario> usuariosRegistrados;		//HashMap para buscar usuarios por matricula
+    private HashMap<String, Usuario> usuariosRegistrados;		// HashMap para buscar usuarios por matricula
     private final String ARCHIVO_USUARIOS = "usuarios.dat";
     
-
+    // --- Constructor --- 
     public GestorUsuarios() {
         usuariosRegistrados = new HashMap<>();
         
         // Al iniciar el gestor, cargamoss los usuarios que ya existan
         cargarUsuarios();
-        
-        
+              
         //En la primera ejecucion (sin usuarios), creamos al admin
         if(usuariosRegistrados.isEmpty()) {
         	Administrador adminPorDefecto = new Administrador("admin", "admin123", "Administrador");
@@ -31,9 +30,10 @@ public class GestorUsuarios {
     }
     
     // =========================================================================
-    // REGISTRAR LECTOR (crear cuenta)
+    // REGISTRA UN NUEVO LECTOR
     // ==========================================================================
     
+    // Crea una cuenta nueva para un lector normal
     public boolean registrarLector(String matricula, String password, String nombre) {
     	//Si la matricula ya existe, rechaza el registro
     	if(usuariosRegistrados.containsKey(matricula)) {
@@ -52,16 +52,16 @@ public class GestorUsuarios {
     // INICIAR SESIÓN
     // ==========================================================================
     
-    //Verifica si la matrícula y contraseña coinciden con alguna cuenta guardada
+    // Verifica si la matrícula y contraseña coinciden con alguna cuenta guardada
     public Usuario validarCredenciales(String matricula, String password) {
     	Usuario u = usuariosRegistrados.get(matricula);
     	
-    	//Usamos getPassword() de la clase Usuario
+    	// Verifica que el usuario exista y que su contraseña coincida
     	if(u != null && u.getPassword().equals(password)) {
-    		return u;
+    		return u;	// Si todo está bien, devuelve la cuenta del usuario
     	}
     	
-    	//Matricula o contraseña incorrecta
+    	// Matricula o contraseña incorrecta
     	return null;
     }
     
@@ -69,15 +69,17 @@ public class GestorUsuarios {
     // BÚSQUEDA RÁPIDA DE USUARIO
     // =========================================================================
     
+    // Permite encontrar a un usuario al instante sin usar ciclos 'for'
     public Usuario buscarPorMatricula(String matricula) {
         // Como usamos un HashMap, no necesitamos un ciclo 'for'
         return usuariosRegistrados.get(matricula);
     }
     
     // =========================================================================
-    // 	PERSISTENCIA (Guardar y Cargar .dat)
+    // 	CARGA Y GUARDADO EN BINARIOS
     // ==========================================================================
     
+    // Guarda el HashMap completo en el archivo 'usuarios.dat'
     private void guardarUsuarios() {
     	try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(ARCHIVO_USUARIOS))){
     		oos.writeObject(usuariosRegistrados);
@@ -86,7 +88,7 @@ public class GestorUsuarios {
     	}
     }
     
-
+    // Lee el archivo 'usuarios.dat' y lo convierte de nuevo en un HashMap
     @SuppressWarnings("unchecked")
     private void cargarUsuarios() {
         File archivo = new File(ARCHIVO_USUARIOS);
@@ -95,7 +97,7 @@ public class GestorUsuarios {
         		usuariosRegistrados = (HashMap<String, Usuario>) ois.readObject();
         	}catch(IOException | ClassNotFoundException e) {
         		System.err.println("Error al cargar usuarios: " + e.getMessage());
-        		usuariosRegistrados = new HashMap<>();
+        		usuariosRegistrados = new HashMap<>();	// Si falla, inicia desde cero
         	}
         }
     }

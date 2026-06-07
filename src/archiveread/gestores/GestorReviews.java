@@ -9,6 +9,11 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
+// =========================================================================
+//	--- Gestor de Reviews ---
+//	Lee y escribe las reseñas de los usuarios en archivos .txt por cada libro
+// =========================================================================
+
 public class GestorReviews {
 	
 	// Metodo para Guardar Reviews
@@ -71,9 +76,9 @@ public class GestorReviews {
                     JTextArea txtTexto = new JTextArea(partes[1]);
                     txtTexto.setFont(CargarFuente.getRegular(14f));
                     txtTexto.setForeground(PaletaColores.TEXTO_GRIS_OSCURO);
-                    txtTexto.setLineWrap(true);
-                    txtTexto.setWrapStyleWord(true);
-                    txtTexto.setEditable(false);
+                    txtTexto.setLineWrap(true);			// Salto de línea
+                    txtTexto.setWrapStyleWord(true);	// Respeta palabras completas
+                    txtTexto.setEditable(false);		// Bloquea edición
                     txtTexto.setOpaque(false);
                     
                     item.add(lblUser, BorderLayout.NORTH);
@@ -85,6 +90,7 @@ public class GestorReviews {
                 }
             }
             
+            // Si el archivo estaba vacio por x razon
             if (!hayReviews) {
             	JLabel lblVacio = UIUtils.crearEtiquetaVacia("Aun no hay reviews. Se el primero en opinar!");
                 lblVacio.setAlignmentX(Component.LEFT_ALIGNMENT);
