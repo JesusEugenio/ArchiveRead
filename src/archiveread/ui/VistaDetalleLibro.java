@@ -238,9 +238,11 @@ public class VistaDetalleLibro extends JPanel {
         // Envolvemos las Reviews en un Scroll en caso de ser muchas
         JScrollPane scrollReviews = new JScrollPane(contenedorAlineadoArriba);
         scrollReviews.setBorder(null);
+        scrollReviews.getVerticalScrollBar().setUnitIncrement(16);
         scrollReviews.getViewport().setBackground(PaletaColores.FONDO_PRINCIPAL);
         scrollReviews.getVerticalScrollBar().setUI(new ScrollModernoUI());
         scrollReviews.getVerticalScrollBar().setPreferredSize(new Dimension(14, 0));
+        scrollReviews.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         cardReviews.add(scrollReviews, BorderLayout.CENTER);
         
         // Espacio/Caja para escribir reviews
