@@ -1,0 +1,33 @@
+========================================
+      REPORTE DE LIBROS PRESTADOS       
+========================================
+Título: El Señor de los Anillos
+Autor: J.R.R. Tolkien
+Prestado a (Matrícula): 548821
+Nombre del Lector: Jesus
+------------------------------------------
+Título: Tr3s
+Autor: Ted Dekker
+Prestado a (Matrícula): 548821
+Nombre del Lector: Jesus
+------------------------------------------
+Título: El Emprendedor
+Autor: Arturo Elias Ayub
+Prestado a (Matrícula): 548826
+Nombre del Lector: Javier Soto
+------------------------------------------
+Título: El Retrato de Dorian Gray
+Autor: Oscar Wilde
+Prestado a (Matrícula): 548825
+Nombre del Lector: Ana Beltrán
+------------------------------------------
+Título: Linux, de cero a ninja
+Autor: Manuel Guerra
+Prestado a (Matrícula): 548827
+Nombre del Lector: Camila Rojas
+------------------------------------------
+Título: El conde de Montecristo
+Autor: Alejandro Dumas
+Prestado a (Matrícula): 548832
+Nombre del Lector: Melissa Castro
+------------------------------------------
