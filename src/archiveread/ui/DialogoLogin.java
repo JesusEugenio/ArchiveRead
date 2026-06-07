@@ -6,12 +6,9 @@ import archiveread.utils.PaletaColores;
 import archiveread.utils.UIUtils;
 import archiveread.gestores.GestorUsuarios;
 
-import java.util.function.Consumer;
-
 // Simplificamos llamada a librerias con .*
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-
 import java.awt.*;
 
 public class DialogoLogin extends JDialog {

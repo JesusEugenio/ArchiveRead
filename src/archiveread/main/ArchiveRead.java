@@ -1,7 +1,9 @@
-// Archive Read - Version 1.7.0
+// ================================
+// Archive Read - Version 1.10
 // ================================
 // Laura Alvarez y Jesus Eugenio
 // ================================
+
 package archiveread.main;
 
 import archiveread.modelos.*;
@@ -11,17 +13,16 @@ import archiveread.ui.*;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.function.BiConsumer;
-
 import javax.swing.*;
-
+import java.util.ArrayList;
 
 // =========================================================================
-// CLASE PRINCIPAL
+// ArchiveRead - Main
 // Controla la Interfaz Grafica principal de la aplicacion
 // =========================================================================
+
 public class ArchiveRead extends JFrame {
+	
     // Paneles principales
     private JPanel panelPrincipal;
     private JPanel panelContenidoCentro; // Controla el intercambio entre vistas
@@ -30,25 +31,27 @@ public class ArchiveRead extends JFrame {
     // Gestores de datos
     private GestorBiblioteca gestorBiblioteca;
     private GestorUsuarios gestorUsuarios;
-    private GestorReviews gestorReviews;      // Instancia del gestor de reviews
-    private GestorReportes gestorReportes;    // Instancia del gestor de reportes
+    private GestorReviews gestorReviews;      
+    private GestorReportes gestorReportes;    
     
     // Estado de la sesión actual
     private Usuario usuarioActual = null; 
-
+    
+    // Punto de arranque de Java
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
             try {
                 ArchiveRead frame = new ArchiveRead();
-                frame.setVisible(true);
+                frame.setVisible(true);	// Hace visible la ventana
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
     }
 
-    // Constructor de la ventana principal
+    // Constructor de la aplicacion
     public ArchiveRead() {
+    	// Inicialización de gestores
         gestorBiblioteca = new GestorBiblioteca();
         gestorUsuarios = new GestorUsuarios();
         gestorReviews = new GestorReviews();      
@@ -61,20 +64,24 @@ public class ArchiveRead extends JFrame {
         Image iconoApp = new ImageIcon("icons/ArchiveRead_icon.png").getImage();
         setIconImage(iconoApp);
         
+        // Configuramos propiedades de la ventana
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1024, 720);
         setMinimumSize(new Dimension(800, 600));
         setLocationRelativeTo(null);
         setExtendedState(JFrame.MAXIMIZED_BOTH); // Inicia maximizada
-
+        
+        // Fondo y panel base
         panelPrincipal = new JPanel(new BorderLayout());
         panelPrincipal.setBackground(PaletaColores.FONDO_PRINCIPAL);
         setContentPane(panelPrincipal);
         
+     	// Inicializamos la zona donde cargaremos el catálogo
         panelContenidoCentro = new JPanel(new BorderLayout());
         panelContenidoCentro.setBackground(PaletaColores.FONDO_PRINCIPAL);
         panelPrincipal.add(panelContenidoCentro, BorderLayout.CENTER);
         
+        // Cargamos la barra superior y el catalogo de libros
         actualizarHeader();
         mostrarCatalogo("Todas");
         
@@ -88,53 +95,12 @@ public class ArchiveRead extends JFrame {
         });
     }
     
-    // =========================================================================
-    // NAVEGACION Y CAMBIO DE VISTAS
-    // ========================================================================
     
-    private void cambiarVista(JPanel nuevoPanel) {
-    	// Si ya hay un panel en el centro, lo quitamos de la pantalla principal
-    	if(panelContenidoCentro != null) {
-    		panelPrincipal.remove(panelContenidoCentro);
-    	}
-    	
-    	// Asignamos el nuevo panel y lo agregamos en el centro del layout
-    	panelContenidoCentro = nuevoPanel;
-    	panelPrincipal.add(panelContenidoCentro, BorderLayout.CENTER);
-    	
-    	// Forzamos a que se dibuje de nuevo la interfaz
-    	panelPrincipal.revalidate();
-    	panelPrincipal.repaint();
-    }
-    
-    public void mostrarNuevoLibro() {
-    	// Obtenemos las categorias para el ComboBox del formulario
-    	ArrayList<String> categoriasUnicas = gestorBiblioteca.obtenerCategoriasUnicas();
-    	
-    	// Generamos el ID del libro en base a cuantos hay (ej. "L005")
-		String nuevoID = gestorBiblioteca.generarSiguienteId();
-    	
-    	// Cuando el Administrador da click en "Guardar Libro" dentro de VistaNuevoLibro
-    	// la vista nos lanza el objeto libro terminado (a excepcion de ID)
-    	// Aqui lo atrapamos (llamado 'nuevoLibro'), le generamos un ID y lo guardamos
-    	cambiarVista(new VistaNuevoLibro(categoriasUnicas, nuevoID,  nuevoLibro -> {
-    		
-    		// Asignamos el ID generado
-    		nuevoLibro.setIdLibro(nuevoID);
-    		
-    		// Le pedimos al Gestor que guarde el Libro en el archivo .dat
-    		gestorBiblioteca.registrarLibro(nuevoLibro);
-    		
-    		// Avisamos al usuario y regresamos al menu principal
-    		JOptionPane.showMessageDialog(this, "El libro '" + nuevoLibro.getTitulo() + "' ha sido añadido!");
-    		mostrarCatalogo("Todas");
-    	}));
-    }
-
     // =========================================================================
     // MÉTODOS DE SESIÓN
     // =========================================================================
     
+    // Abre la miniventana (dialogo) para iniciar sesión
     private void abrirDialogoLogin() {
     		DialogoLogin dialogLogin = new DialogoLogin(this, gestorUsuarios);
     		dialogLogin.setVisible(true);
@@ -157,12 +123,29 @@ public class ArchiveRead extends JFrame {
         actualizarHeader();
         mostrarCatalogo("Todas");
     }
-
-    // =========================================================================
-    // RENDERIZADO DE LAS VISTAS DE LA PANTALLA 
-    // =========================================================================
     
-    // Pedimos la lista de libros al gestor y se la mandamos a VistaListaLibros pa que la dibuje
+    
+    // =========================================================================
+    // NAVEGACION Y CAMBIO DE VISTAS
+    // ========================================================================
+    
+    // Destruye el panel actual y pone el nuevo para "cambiar de pantalla"
+    private void cambiarVista(JPanel nuevoPanel) {
+    	// Si ya hay un panel en el centro, lo quitamos de la pantalla principal
+    	if(panelContenidoCentro != null) {
+    		panelPrincipal.remove(panelContenidoCentro);
+    	}
+    	
+    	// Asignamos el nuevo panel y lo agregamos en el centro del layout
+    	panelContenidoCentro = nuevoPanel;
+    	panelPrincipal.add(panelContenidoCentro, BorderLayout.CENTER);
+    	
+    	// Forzamos a que se dibuje de nuevo la interfaz
+    	panelPrincipal.revalidate();
+    	panelPrincipal.repaint();
+    }
+    
+    // Pedimos la lista de libros al gestor y se la mandamos a VistaListaLibros para que la dibuje
     private void mostrarCatalogo(String categoriaFiltro) {
     	String tituloCatalogo = categoriaFiltro.equals("Todas") ?
     			"Libros Recientes" : "Libros de " + categoriaFiltro + ": ";
@@ -205,7 +188,7 @@ public class ArchiveRead extends JFrame {
         mostrarDetalleLibro(libro, false);
     }
     
-    // SobreCarga = Crea la pantalla de detalles de un libro especifico y la muestra, sabe en que pestaña esta (sinopsis / reviews)
+    // SobreCarga - Crea la pantalla de detalles de un libro especifico y la muestra, sabe en que pestaña esta (sinopsis / reviews)
     public void mostrarDetalleLibro(Libro libro, boolean abrirOnReviews) {
     	// Pasamos todos los eventos hacia la vista de detalles
     	cambiarVista(new VistaDetalleLibro(
@@ -270,10 +253,8 @@ public class ArchiveRead extends JFrame {
     	));
     }
     
-    
-    // Metodo para navegar a la biblioteca personal del usuario [EN DESARROLLO]
+    // Metodo para navegar a la biblioteca personal del usuario
     public void mostrarMiBiblioteca() {
-    	//mostrarCatalogo("Todas");
     	
     	// Validar usuario
     	if(usuarioActual == null) {
@@ -292,34 +273,55 @@ public class ArchiveRead extends JFrame {
     			rentados,
     			guardados,
     			
-    			//Cable: volver
+    			// Cable: volver (onVolverCatalogo)
     			() -> mostrarCatalogo("Todas"),
     			
-    			libro -> mostrarDetalleLibro(libro),
-    			
-    			//======================================================
-    			// CABLES DE ACCION DIRECTA
-    			//======================================================
-    			
-    			//Cable: Devolver (Desde la lista de Rentados)
-    			libroParaDevolver -> {
+    			libro -> mostrarDetalleLibro(libro), // onLibroSeleccionado
+
+    			// Cable: Devolver (Desde la lista de Rentados)
+    			libroParaDevolver -> { // onDevolverLibro
     				devolverLibro(libroParaDevolver);
-    				//Se recarga la página para que el libro desaparezca de la lista
+    				// Se recarga la página para que el libro desaparezca de la lista
     				mostrarMiBiblioteca();
     			},
     			
-    			libroParaRentar -> {
+    			libroParaRentar -> { // onRentarLibro
     				rentarLibro(libroParaRentar);
     				//Al rentarlo, el libro se movera de la lista de abajo hacia la de arriba
     				mostrarMiBiblioteca();
     			},
     			
-    			libroParaQuitar -> {
+    			libroParaQuitar -> { // onQuitarLibro
     				libroParaQuitar.toggleGuardado(usuarioActual.getMatricula());
     				gestorBiblioteca.actualizarLibro();	//Se guarda el cambio en el .dat
     				mostrarMiBiblioteca();
     			}
     			));
+    }
+    
+    // Abre el formulario para añadir libros
+    public void mostrarNuevoLibro() {
+    	// Obtenemos las categorias para el ComboBox del formulario
+    	ArrayList<String> categoriasUnicas = gestorBiblioteca.obtenerCategoriasUnicas();
+    	
+    	// Generamos el ID del libro en base a cuantos hay (ej. "L005")
+		String nuevoID = gestorBiblioteca.generarSiguienteId();
+    	
+    	// Cuando el Administrador da click en "Guardar Libro" dentro de VistaNuevoLibro
+    	// la vista nos lanza el objeto libro terminado (a excepcion de ID)
+    	// Aqui lo atrapamos (llamado 'nuevoLibro'), le generamos un ID y lo guardamos
+    	cambiarVista(new VistaNuevoLibro(categoriasUnicas, nuevoID,  nuevoLibro -> {
+    		
+    		// Asignamos el ID generado
+    		nuevoLibro.setIdLibro(nuevoID);
+    		
+    		// Le pedimos al Gestor que guarde el Libro en el archivo .dat
+    		gestorBiblioteca.registrarLibro(nuevoLibro);
+    		
+    		// Avisamos al usuario y regresamos al menu principal
+    		JOptionPane.showMessageDialog(this, "El libro '" + nuevoLibro.getTitulo() + "' ha sido añadido!");
+    		mostrarCatalogo("Todas");
+    	}));
     }
     
    
