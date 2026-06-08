@@ -90,7 +90,7 @@ public class UIUtils {
     }
     
     // ComboBox moderno
-    public static void aplicarEstiloCombo(javax.swing.JComboBox<String> combo) {
+    public static void aplicarEstiloCombo(JComboBox<String> combo) {
         // Aplicamos el botón de flecha plano
         combo.setUI(new ComboModernoUI());
         combo.setMaximumRowCount(6);
@@ -102,10 +102,10 @@ public class UIUtils {
         combo.setBorder(BorderFactory.createLineBorder(PaletaColores.BORDE_CLARO, 1));
         
         // Modificamos cómo se dibujan las celdas de la lista al abrirse
-        combo.setRenderer(new javax.swing.DefaultListCellRenderer() {
+        combo.setRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                javax.swing.JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 
                 // Le damos margen (padding) para que no se vea amontonado
                 label.setBorder(BorderFactory.createEmptyBorder(4, 10, 4, 10)); 
@@ -115,7 +115,7 @@ public class UIUtils {
                     label.setBackground(PaletaColores.PRIMARIO); // Fondo Magenta
                     label.setForeground(PaletaColores.TEXTO_BLANCO); // Letras Blancas
                 } else {
-                    label.setBackground(java.awt.Color.WHITE); // Fondo normal
+                    label.setBackground(PaletaColores.BLANCO); // Fondo normal
                     label.setForeground(PaletaColores.TEXTO_NEGRO); // Letras normales
                 }
                 return label;

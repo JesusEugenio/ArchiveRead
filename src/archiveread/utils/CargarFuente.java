@@ -6,7 +6,11 @@ import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
 
-//Cargador de fuente personalizada
+// =========================================================================
+// CargarFuente
+// Crea la fuente personalizada 'Red Hat Display' para el proyecto
+// =========================================================================
+
 public class CargarFuente {
 	public static Font REGULAR;
 	public static Font BOLD;
@@ -14,7 +18,6 @@ public class CargarFuente {
 	
 	// Ruta para indicar donde se encuentra la fuente
 	private static final String RUTA_FONTS = "fonts/";
-	
 	static {
 		try {
 			REGULAR = Font.createFont(Font.TRUETYPE_FONT, new File(RUTA_FONTS + "RedHatDisplay-Regular.ttf"));
@@ -39,6 +42,8 @@ public class CargarFuente {
 		
 		}
 	
+	
+	// Getters
 	public static Font getRegular(float tamano) {
 		return REGULAR.deriveFont(tamano);
 	}

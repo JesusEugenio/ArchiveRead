@@ -14,6 +14,11 @@ import javax.swing.plaf.basic.BasicComboBoxUI;
 import javax.swing.plaf.basic.BasicComboPopup;
 import javax.swing.plaf.basic.ComboPopup;
 
+// =========================================================================
+// ComboModernoUI
+// Personalizacion visual de las listas desplegables (JComboBox)
+// =========================================================================
+
 public class ComboModernoUI extends BasicComboBoxUI {
     
     // =========================================================================

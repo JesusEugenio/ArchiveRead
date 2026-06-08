@@ -10,6 +10,11 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 
+// =========================================================================
+// ScrollModernoUI
+// Personalizacion visual de las barras de desplazamiento (ScrollBar)
+// =========================================================================
+
 public class ScrollModernoUI extends BasicScrollBarUI {
     
     // Configuramos los grosores
@@ -24,7 +29,7 @@ public class ScrollModernoUI extends BasicScrollBarUI {
     }
 
     // ==========================================
-    // 1. ELIMINAR LAS FLECHAS
+    // ELIMINAR LAS FLECHAS
     // ==========================================
     @Override
     protected JButton createDecreaseButton(int orientation) {
@@ -48,7 +53,7 @@ public class ScrollModernoUI extends BasicScrollBarUI {
     }
 
     // ==========================================
-    // 2. DIBUJAR LA PISTA (FONDO)
+    // DIBUJAR EL FONDO DEL SCROLL
     // ==========================================
     @Override
     protected void paintTrack(Graphics g, JComponent c, Rectangle trackBounds) {
@@ -59,7 +64,7 @@ public class ScrollModernoUI extends BasicScrollBarUI {
     }
 
     // ==========================================
-    // 3. DIBUJAR EL PULGAR (BARRA MÓVIL)
+    // DIBUJAR LA BARRA MOVIL
     // ==========================================
     @Override
     protected void paintThumb(Graphics g, JComponent c, Rectangle thumbBounds) {

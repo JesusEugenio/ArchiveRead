@@ -6,6 +6,11 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.text.Normalizer;
 
+// =========================================================================
+// FileUtils
+// Gestiona la limpieza del nombre y guardado de portada de un archivo
+// =========================================================================
+
 public class FileUtils {
 	
 	public static String limpiarNombreArchivo(String nombre) {

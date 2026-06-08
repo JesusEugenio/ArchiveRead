@@ -2,6 +2,11 @@ package archiveread.utils;
 
 import java.awt.Color;
 
+// =========================================================================
+// PaletaColores
+// Definicion de los colores, es la identidad visual de la app
+// =========================================================================
+
 public class PaletaColores {
 	
 	// Colores Principales
