@@ -9,6 +9,11 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
+// =========================================================================
+// DialogoRegistro
+// Ventana emergente para registrar un nuevo usuario (lector) en el sistema
+// =========================================================================
+
 public class DialogoRegistro extends JDialog {
 
     public DialogoRegistro(JDialog parent, GestorUsuarios gestorUsuarios) {

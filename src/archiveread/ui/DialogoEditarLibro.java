@@ -6,9 +6,13 @@ import archiveread.utils.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-
 import java.awt.*;
 import java.util.ArrayList;
+
+// =============================================
+// DialogoEditarLibro
+// Ventana emergente para modificar los datos de un libro existente
+// =============================================
 
 public class DialogoEditarLibro extends JDialog {
 	

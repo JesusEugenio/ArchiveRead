@@ -1,26 +1,8 @@
 package archiveread.ui;
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.awt.Image;
-
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
@@ -30,6 +12,11 @@ import archiveread.utils.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer; 
 import javax.swing.JOptionPane;
+
+// =============================================
+// VistaDetalleLibro
+// Pantalla a detalle de un libro con opciones de préstamo, guardado y reseñas
+// =============================================
 
 public class VistaDetalleLibro extends JPanel {
 	
@@ -60,7 +47,7 @@ public class VistaDetalleLibro extends JPanel {
     	add(pnlRuta, BorderLayout.NORTH);
 		
     	// ================================================================
-    	// ===  Panel que agrupa todo el banner e informacion del libro ===
+    	// Panel que agrupa todo el banner e informacion del libro 
     	// ================================================================
     	JPanel pnlContenidoCentral = new JPanel(new BorderLayout());
         pnlContenidoCentral.setBackground(PaletaColores.FONDO_PRINCIPAL);
@@ -102,15 +89,18 @@ public class VistaDetalleLibro extends JPanel {
     	btnRentar.setPreferredSize(new Dimension(180, 45));
     	
     	if (libro.isDisponible()) {
+    		// El libro está libre para rentar
             btnRentar.addActionListener(e -> onRentarLibro.run());
             
         } else if (usuarioActual != null && usuarioActual.getMatricula().equals(libro.getMatriculaPrestamo())) {
+        	// El libro NO está libre y el dueño actual del préstamo es el usuario que mira la pantalla
             btnRentar.setText("Devolver");
             btnRentar.setBackground(Color.DARK_GRAY);
             btnRentar.setForeground(Color.WHITE);
             btnRentar.addActionListener(e -> onDevolverLibro.run());
             
         } else {
+        	// El libro NO está libre y el usuario no lo tiene
             btnRentar.setText("Prestado");
             btnRentar.setBackground(PaletaColores.BOTON_DESHABILITADO);
             btnRentar.setForeground(PaletaColores.TEXTO_GRIS_CLARO);
@@ -174,7 +164,7 @@ public class VistaDetalleLibro extends JPanel {
         pnlContenidoCentral.add(pnlBannerOscuro, BorderLayout.NORTH);
         
         // ================================================
-        // === Seccion para agregar Sinopsis y Reviews ====
+        // Seccion para agregar Sinopsis y Reviews 
         // ================================================
         JPanel pnlInferior = new JPanel(new BorderLayout());
         pnlInferior.setBackground(PaletaColores.FONDO_PRINCIPAL);
@@ -203,6 +193,7 @@ public class VistaDetalleLibro extends JPanel {
         pnlTabs.add(Box.createHorizontalStrut(15));
         pnlTabs.add(lblTabReviews);
         
+        // Usamos un CardLayout para intercambiar entre vista de Sinopsis y Reseñas
         JPanel pnlCards = new JPanel(new CardLayout());
         pnlCards.setBackground(PaletaColores.FONDO_PRINCIPAL);
         
@@ -218,7 +209,7 @@ public class VistaDetalleLibro extends JPanel {
         txtSinopsis.setForeground(PaletaColores.TEXTO_GRIS_OSCURO); 
         cardSinopsis.add(txtSinopsis, BorderLayout.NORTH);
         
-        // Pestaña 2: Reviews - Nuevo Contenido
+        // Pestaña 2: Reviews 
         JPanel cardReviews = new JPanel(new BorderLayout(0, 10));
         cardReviews.setBackground(PaletaColores.FONDO_PRINCIPAL);
         
@@ -317,9 +308,9 @@ public class VistaDetalleLibro extends JPanel {
         // Para poder cambiar entre pestañas
         CardLayout cl = (CardLayout) pnlCards.getLayout();
         
-        // Al presionar en el texto de Sinopsis
-        lblTabSinopsis.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override public void mouseClicked(java.awt.event.MouseEvent e) {
+        // Al presionar en el panel de Sinopsis
+        lblTabSinopsis.addMouseListener(new MouseAdapter() {
+            @Override public void mouseClicked(MouseEvent e) {
                 cl.show(pnlCards, "SINOPSIS");
                 lblTabSinopsis.setForeground(Color.BLACK);
                 lblTabSinopsis.setBorder(BorderFactory.createMatteBorder(0, 0, 4, 0, PaletaColores.PRIMARIO));
@@ -328,8 +319,9 @@ public class VistaDetalleLibro extends JPanel {
             }
         });
         
-        lblTabReviews.addMouseListener(new java.awt.event.MouseAdapter() {
-            @Override public void mouseClicked(java.awt.event.MouseEvent e) {
+        // Al presionar en el panel de Reviews
+        lblTabReviews.addMouseListener(new MouseAdapter() {
+            @Override public void mouseClicked(MouseEvent e) {
                 cl.show(pnlCards, "REVIEWS");
                 lblTabReviews.setForeground(Color.BLACK);
                 lblTabReviews.setBorder(BorderFactory.createMatteBorder(0, 0, 4, 0, PaletaColores.PRIMARIO));
@@ -436,6 +428,7 @@ public class VistaDetalleLibro extends JPanel {
         SwingUtilities.invokeLater(() -> scrollGeneralDetalles.getVerticalScrollBar().setValue(0));
         add(scrollGeneralDetalles, BorderLayout.CENTER);
         
+        // Evitamos que al guardar una reseña el panel regrese obligatoriamente a Sinopsis
         if (abrirOnReviews) {
         	// Cambiamos el CardLayout visible
         	cl.show(pnlCards, "REVIEWS");

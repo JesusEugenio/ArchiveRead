@@ -9,9 +9,11 @@ import java.util.function.Consumer;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
+// =========================================================================
+// VistaNuevoLibro
 // Vista exclusiva para el administrador, donde puede agregar nuevos libros
+// =========================================================================
 
 public class VistaNuevoLibro extends JPanel {
 	

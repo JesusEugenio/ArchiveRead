@@ -2,6 +2,7 @@ package archiveread.ui;
 
 import archiveread.utils.*;
 import archiveread.modelos.Libro;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -10,19 +11,24 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
+// =============================================
+// VistaListaLibros
+// Pantalla que dibuja el catalogo completo de libros y las opciones de filtrado
+// =============================================
+
 public class VistaListaLibros extends JPanel {
     
-    // Ahora la funcion muestra la lista de libros de acuerdo a la categoria (por defecto "Todas)
+	// Recibe el título, la lista de libros ya filtrada y los comandos a ejecutar (Consumers/Runnables)
     public VistaListaLibros(String tituloLabel, ArrayList<Libro> librosMostrados, String filtroActual,
-                            ArrayList<String> listaCategorias,
-                            Consumer<String> onFiltrar, Runnable onReporteCat, Runnable onReporteAut,
-                            Consumer<Libro> onLibroSeleccionado) {
+                            ArrayList<String> listaCategorias, Consumer<String> onFiltrar, Runnable onReporteCat,
+                            Runnable onReporteAut, Consumer<Libro> onLibroSeleccionado) {
         
         // Contenedor base
         setLayout(new BorderLayout(20, 20));
         setBackground(PaletaColores.FONDO_PRINCIPAL);
         setBorder(new EmptyBorder(20, 40, 20, 40));
         
+        // Título dinámico (Ej. "Libros Recientes" o "Libros de Programación:")
         JLabel lblTitulo = new JLabel(tituloLabel);
         lblTitulo.setFont(CargarFuente.getBold(22f));
         add(lblTitulo, BorderLayout.NORTH);
@@ -36,7 +42,8 @@ public class VistaListaLibros extends JPanel {
             panelListaLibros.add(UIUtils.crearEtiquetaVacia("No se encontraron libros para esta vista"));
         } else {
             for (Libro l : librosMostrados) {
-                // A cada tarjeta le decimos "Si te tocan, manda ESTE libro 'l' por el cable al Main".
+            	// Por cada libro, crea una TarjetaLibro y lo apila
+                // A cada tarjeta le decimos "Si te tocan, manda este libro 'l' por el cable al Main".
                 panelListaLibros.add(new TarjetaLibro(l, () -> onLibroSeleccionado.accept(l))); 
             }
         }
@@ -99,7 +106,7 @@ public class VistaListaLibros extends JPanel {
         JButton btnFiltrar = UIUtils.crearBotonEstandar("Mostrar Libros");
         btnFiltrar.setBounds(20, 130, 250, 40);
         btnFiltrar.addActionListener( e -> {
-            // Leemos el texto del combo y lo mandamos por el cable 'onFiltrar' al Main
+        	// Dispara el cable para decirle al Main que recargue la vista aplicando la categoría seleccionada
             onFiltrar.accept(comboCategorias.getSelectedItem().toString());
         });
         cajaFiltros.add(btnFiltrar);
@@ -112,7 +119,7 @@ public class VistaListaLibros extends JPanel {
         cajaReportes.setMinimumSize(new Dimension(300, 200));
         cajaReportes.setMaximumSize(new Dimension(300, 120));
         
-        // Enlaces para generar reportes en archivos .txt "AUN EN PROCESO / REDISEÑO"
+        // Enlaces para generar reportes en archivos .txt 
         JLabel lblReportesTitulo = UIUtils.crearLabel("Generar Reportes (.txt)", CargarFuente.BOLD, 15f, PaletaColores.TEXTO_NEGRO);
         lblReportesTitulo.setBounds(20, 20, 250, 20);
         cajaReportes.add(lblReportesTitulo);

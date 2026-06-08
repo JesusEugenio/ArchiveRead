@@ -2,25 +2,20 @@ package archiveread.ui;
 
 import archiveread.modelos.Libro;
 import archiveread.modelos.Usuario;
-import archiveread.utils.CargarFuente;
-import archiveread.utils.PaletaColores;
-import archiveread.utils.ScrollModernoUI;
-import archiveread.utils.UIUtils;
+import archiveread.utils.*;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
-
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Image;
+import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.function.Consumer;
+
+// =============================================
+// VistaMiBiblioteca
+// Pantalla personal del usuario con sus libros rentados y guardados
+// =============================================
 
 public class VistaMiBiblioteca extends JPanel{
 

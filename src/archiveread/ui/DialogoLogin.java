@@ -11,6 +11,11 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 
+//=========================================================================
+// DialogoLogin
+// Mini-ventana (Diálogo) para que los usuarios inicien sesión en el sistema
+// =========================================================================
+
 public class DialogoLogin extends JDialog {
 	
 	private Usuario usuarioAutenticado = null;

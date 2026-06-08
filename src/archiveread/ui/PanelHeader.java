@@ -8,9 +8,10 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
-// ===================
-// Esta clase dibuja la parte superior de la app (Titulo de la app, donde inicias sesion, etc.)
-// ==================
+// =============================================
+// VistaListaLibros
+// dibuja la parte superior de la app (Titulo de la app, inicio de sesion, etc.)
+// =============================================
 
 public class PanelHeader extends JPanel {
 	

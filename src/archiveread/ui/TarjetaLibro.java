@@ -9,15 +9,21 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
+// =============================================
+// TarjetaLibro
+// Componente visual que representa un resumen de un libro
+// =============================================
+
 public class TarjetaLibro extends JPanel {
     
+	// Recibe el libro a mostrar y la acción que debe ejecutarse al hacerle clic
     public TarjetaLibro(Libro l, Runnable alHacerClic) {
     	// Margen de la Tarjeta 
     	setLayout(new BorderLayout());
         setOpaque(false); 
-        setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0)); 
+        setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0)); // Espaciado inferior entre tarjetas
         setAlignmentX(Component.LEFT_ALIGNMENT);
-        setMaximumSize(new Dimension(Integer.MAX_VALUE, 250));
+        setMaximumSize(new Dimension(Integer.MAX_VALUE, 250)); // Tope de altura
     	
         // Contenedor principal, tarjeta blanca que agrupa todo el contenido del libro
         JPanel panelTarjeta = new JPanel(new BorderLayout(20, 0));
