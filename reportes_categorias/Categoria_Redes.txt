@@ -1,3 +1,0 @@
---- CATEGORÍA: Redes ---
-
-- Redes de Computadoras (Autor: Andrew Tanenbaum)

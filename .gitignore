@@ -1,3 +1,8 @@
+# Archivos y carpetas de reportes autogenerados
+reportes_categorias/
+reportes_autores/
+reporte_prestamos.txt
+
 # Compiled class file
 *.class
 
