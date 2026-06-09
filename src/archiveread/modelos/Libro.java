@@ -3,6 +3,11 @@ package archiveread.modelos;
 import java.io.Serializable; // Se implementa Serializable para poder guardar objetos en archivos .dat
 import java.util.ArrayList;
 
+// =========================================================================
+// Libro
+// Clase que contiene todos los atributos de un libro en el sistema
+// =========================================================================
+
 public class Libro implements Serializable {
 	// Identificador de control de version para la serializacion 
 	/* Con esto nos aseguramos que los archivos binarios guardados sean compatibles 
