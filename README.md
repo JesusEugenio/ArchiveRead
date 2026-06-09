@@ -1,6 +1,6 @@
 # 📚 ArchiveRead
 
-ArchiveRead es un programa de escritorio hecho en **Java Swing** para gestionar una biblioteca digital. Permite a los usuarios explorar un catálogo de libros, rentarlos y escribir reseñas, mientras que los administradores pueden agregar nuevos títulos y actualizar las portadas.
+ArchiveRead es un programa de escritorio hecho en **Java Swing** para gestionar una biblioteca digital. Permite a los usuarios explorar un catálogo de libros, rentarlos y escribir reseñas, mientras que los administradores pueden agregar nuevos títulos y actualizar los datos de titulos existentes.
 
 ## ✨ ¿Qué se puede hacer?
 
@@ -18,4 +18,5 @@ ArchiveRead es un programa de escritorio hecho en **Java Swing** para gestionar 
 
 ## 👤 Autores
 
-* **Jesús Eugenio Hernández Rodríguez** * **Laura Sofia Álvarez Huerta**
+* **Jesús Eugenio Hernández Rodríguez** * 
+* **Laura Sofia Álvarez Huerta** *
