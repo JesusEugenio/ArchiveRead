@@ -8,7 +8,7 @@ ArchiveRead es un programa de escritorio hecho en **Java Swing** para gestionar 
 * **Administradores:** Subir nuevos libros con imágenes de portada, editar información y ver quién tiene rentado cada libro.
 * **Fácil de usar:** Toda la información se guarda automáticamente en archivos locales (`.dat` y `.txt`) dentro de la misma carpeta del proyecto.
 
-## 🚀 Instalacion y Ejecucion
+## 🖥️ Instalacion y Ejecucion
 
 1. Descarga el código (en formato `.zip`) o clona este repositorio.
 2. Importa la carpeta en tu **Eclipse IDE** (`File > Import... > General > Existing Projects into Workspace`).
@@ -18,5 +18,5 @@ ArchiveRead es un programa de escritorio hecho en **Java Swing** para gestionar 
 
 ## 👤 Autores
 
+* **Laura Sofia Álvarez Huerta**
 * **Jesús Eugenio Hernández Rodríguez** 
-* **Laura Sofia Álvarez Huerta** 
