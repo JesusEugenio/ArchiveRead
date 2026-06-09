@@ -21,4 +21,6 @@
 2. Importa la carpeta en tu **Eclipse IDE** (`File > Import... > General > Existing Projects into Workspace`).
 3. Busca y ejecuta el archivo principal: `ArchiveRead.java`.
 
-*Nota: El programa creará automáticamente sus carpetas de imágenes y datos la primera vez que lo abras, no te preocupes si no las ves al principio.*
+##
+> [!NOTE]
+> **Generación de archivos locales:** La primera vez que ejecutes el proyecto, el sistema creará automáticamente las carpetas `covers/` y `reviews/`, así como los archivos `.dat` en la raíz de tu carpeta. No te preocupes si no los ves al clonar el repositorio.
