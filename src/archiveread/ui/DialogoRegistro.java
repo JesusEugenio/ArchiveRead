@@ -115,6 +115,11 @@ public class DialogoRegistro extends JDialog {
                 JOptionPane.showMessageDialog(this, "Completa todos los campos.", "Aviso", JOptionPane.WARNING_MESSAGE);
                 return; // Corta la ejecución aqui si faltan datos
             }
+            
+            if (mat.length() != 6) {
+            	JOptionPane.showMessageDialog(this, "La matrícula debe tener exactamente 6 dígitos (Ej. 548821).", "Aviso", JOptionPane.WARNING_MESSAGE);
+            	return; 
+            }
 
             // Enviamos los datos al GestorUsuarios
             boolean exito = gestorUsuarios.registrarLector(mat, pass, nom);
