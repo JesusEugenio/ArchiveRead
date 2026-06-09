@@ -18,5 +18,5 @@ ArchiveRead es un programa de escritorio hecho en **Java Swing** para gestionar 
 
 ## 👤 Autores
 
-* **Jesús Eugenio Hernández Rodríguez** * 
-* **Laura Sofia Álvarez Huerta** *
+* **Jesús Eugenio Hernández Rodríguez** 
+* **Laura Sofia Álvarez Huerta** 
