@@ -8,6 +8,8 @@ import archiveread.utils.UIUtils;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 // =========================================================================
 // DialogoRegistro
@@ -67,6 +69,19 @@ public class DialogoRegistro extends JDialog {
         txtMatricula.setFont(CargarFuente.getRegular(14f));
         txtMatricula.setPreferredSize(new Dimension(200, 30));
         txtMatricula.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY), new EmptyBorder(5, 8, 5, 8)));
+        // Limitamos la creacion de la matricula a 6 numeros
+        txtMatricula.addKeyListener(new KeyAdapter() {
+            public void keyTyped(KeyEvent evt) {
+                // Si ya hay 6 caracteres, ignoramos la nueva tecla presionada
+                if (txtMatricula.getText().length() >= 6) {
+                    evt.consume(); 
+                }
+                // Bloquea también si intentan escribir letras (Solo acepta números)
+                if (!Character.isDigit(evt.getKeyChar())) {
+                    evt.consume();
+                }
+            }
+        });
         pnlFormulario.add(txtMatricula, gbc);
 
         // --- FILA 3: Contraseña ---
