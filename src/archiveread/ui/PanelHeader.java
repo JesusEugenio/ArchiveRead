@@ -50,6 +50,7 @@ public class PanelHeader extends JPanel {
         	pnlIzquierda.add(UIUtils.crearMenuLabel("ReportePrestamos ", onReportePrestamosClick));
         }
         
+        // Evaluamos si existe una sesion iniciada
         if (usuarioActual == null) {
             JButton btnIngresar = UIUtils.crearBotonEstandar("Ingresar", PaletaColores.COLOR_FONDO_BOX, PaletaColores.TEXTO_GRIS_OSCURO);
             

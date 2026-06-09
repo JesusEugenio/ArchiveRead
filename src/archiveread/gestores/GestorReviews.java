@@ -17,6 +17,7 @@ import javax.swing.border.LineBorder;
 public class GestorReviews {
 	
 	// Metodo para Guardar Reviews
+	//Crea una carpeta y dentro crea archivos para las reseñas del libro solicitado
     public void guardarReview(Libro libro, String usuario, String texto) {
         File dir = new File("reviews/");
         if (!dir.exists()) {
