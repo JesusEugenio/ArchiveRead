@@ -19,6 +19,7 @@ import java.awt.event.KeyEvent;
 public class DialogoRegistro extends JDialog {
 
     public DialogoRegistro(JDialog parent, GestorUsuarios gestorUsuarios) {
+    	
         // Modalidad activada para bloquear el Login de fondo
         super(parent, "Registro de Nuevo Usuario", true);
         setSize(400, 380); 
