@@ -170,6 +170,7 @@ public class ArchiveRead extends JFrame {
     	// Creamos el Header y le pasamos las recetas con las acciones que debe ejecutar
     	panelHeader = new PanelHeader(
     			usuarioActual, 
+    			textoBusqueda -> filtrarCatalogoPorBusqueda(textoBusqueda),
     			() -> mostrarCatalogo("Todas"), 
     			() -> mostrarMiBiblioteca(), 
     			() -> abrirDialogoLogin(), 
@@ -182,6 +183,24 @@ public class ArchiveRead extends JFrame {
     	panelPrincipal.revalidate();
     	panelPrincipal.repaint();
     }
+    
+    // Método que recibe el texto del Header, pide los libros al gestor y refresca la VistaListaLibros
+    private void filtrarCatalogoPorBusqueda(String texto) {
+        ArrayList<Libro> librosFiltrados = gestorBiblioteca.buscarLibrosPorTitulo(texto);
+        
+        String etiquetaTitulo = texto.trim().isEmpty() ? 
+                "Libros Recientes" : "Resultados para: '" + texto + "'";
+        
+        // Renderizamos las tarjetas resultantes de forma fluida
+        cambiarVista(new VistaListaLibros(
+                etiquetaTitulo, librosFiltrados, "Todas", gestorBiblioteca.obtenerCategoriasUnicas(),
+                cat -> mostrarCatalogo(cat),
+                () -> gestorReportes.generarReporteCategorias(this, gestorBiblioteca),
+                () -> gestorReportes.generarReporteAutores(this, gestorBiblioteca), 
+                libro -> mostrarDetalleLibro(libro)
+        ));
+    }
+    
     
     // Si la interfaz no nos dice que empecemos en la pestaña de reviews, mostramos la interfaz por defecto en sinopsis
     public void mostrarDetalleLibro(Libro libro) {

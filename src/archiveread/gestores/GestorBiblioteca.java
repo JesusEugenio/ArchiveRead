@@ -174,4 +174,35 @@ public class GestorBiblioteca {
         }
         return resultados;
     }
+    
+    // Buscar libros por título (Ignorando tildes, espacios y mayúsculas)
+    public ArrayList<Libro> buscarLibrosPorTitulo(String termino) {
+        ArrayList<Libro> resultados = new ArrayList<>();
+        
+        // Si el término está vacío, devolvemos todo el inventario
+        if (termino == null || termino.trim().isEmpty()) {
+            return new ArrayList<>(inventario);
+        }
+        
+        String terminoLimpio = eliminarTildesYMinusculas(termino);
+        
+        for (Libro l : inventario) {
+            if (l.getTitulo() != null) {
+                String tituloLimpio = eliminarTildesYMinusculas(l.getTitulo());
+                if (tituloLimpio.contains(terminoLimpio)) {
+                    resultados.add(l);
+                }
+            }
+        }
+        return resultados;
+    }
+
+    // Método auxiliar interno para estandarizar las cadenas de comparación
+    private String eliminarTildesYMinusculas(String texto) {
+        String normalizado = java.text.Normalizer.normalize(texto.trim(), java.text.Normalizer.Form.NFD);
+        return normalizado.replaceAll("\\p{M}", "").toLowerCase().replace(" ", "");
+    }
+    
+    
+    
 }
