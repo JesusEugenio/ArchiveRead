@@ -17,11 +17,25 @@ import javax.swing.border.LineBorder;
 // =============================================
 
 public class VistaListaLibros extends JPanel {
+	
+	// Variables para el control de paginación
+    private ArrayList<Libro> todosLosLibros;
+    private int paginaActual = 0;
+    private final int LIBROS_POR_PAGINA = 5;
+    
+    // Componentes que necesitan actualización dinámica
+    private JPanel panelListaLibros;
+    private JPanel panelPaginacion;
+    private JLabel lblInfoPagina;
+    private JButton btnAnterior;
+    private JButton btnSiguiente;
     
 	// Recibe el título, la lista de libros ya filtrada y los comandos a ejecutar (Consumers/Runnables)
     public VistaListaLibros(String tituloLabel, ArrayList<Libro> librosMostrados, String filtroActual,
                             ArrayList<String> listaCategorias, Consumer<String> onFiltrar, Runnable onReporteCat,
                             Runnable onReporteAut, Consumer<Libro> onLibroSeleccionado) {
+    	
+    	this.todosLosLibros = librosMostrados;
         
         // Contenedor base
         setLayout(new BorderLayout(20, 20));
@@ -34,22 +48,9 @@ public class VistaListaLibros extends JPanel {
         add(lblTitulo, BorderLayout.NORTH);
         
         // Seccion Central - Aqui se apilan las entradas de cada libro
-        JPanel panelListaLibros = new JPanel();
+        panelListaLibros = new JPanel();
         panelListaLibros.setLayout(new BoxLayout(panelListaLibros, BoxLayout.Y_AXIS));
         panelListaLibros.setBackground(PaletaColores.FONDO_PRINCIPAL);
-        
-        if (librosMostrados.isEmpty()) {
-            panelListaLibros.add(UIUtils.crearEtiquetaVacia("No se encontraron libros para esta vista"));
-        } else {
-            for (Libro l : librosMostrados) {
-            	// Por cada libro, crea una TarjetaLibro y lo apila
-                // A cada tarjeta le decimos "Si te tocan, manda este libro 'l' por el cable al Main".
-                panelListaLibros.add(new TarjetaLibro(l, () -> onLibroSeleccionado.accept(l))); 
-            }
-        }
-        
-        panelListaLibros.setBackground(PaletaColores.FONDO_PRINCIPAL);
-        panelListaLibros.setOpaque(true);
         
         // Envolvemos la lista en un scrollPane
         JScrollPane scrollPane = new JScrollPane(panelListaLibros);
@@ -62,9 +63,51 @@ public class VistaListaLibros extends JPanel {
         scrollPane.getVerticalScrollBar().setUI(new ScrollModernoUI()); 
         scrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(14, 0));
         
+        // Panel de Controles de Paginación 
+        panelPaginacion = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        panelPaginacion.setBackground(PaletaColores.FONDO_PRINCIPAL);
+        panelPaginacion.setMaximumSize(new Dimension(Integer.MAX_VALUE, 60));
+        panelPaginacion.setAlignmentX(Component.LEFT_ALIGNMENT);
+        
+        btnAnterior = UIUtils.crearBotonEstandar("Anterior");
+        btnAnterior.setPreferredSize(new Dimension(120, 35));
+        
+        lblInfoPagina = UIUtils.crearLabel("Página 1 de 1", CargarFuente.BOLD, 14f, PaletaColores.TEXTO_NEGRO);
+        
+        btnSiguiente = UIUtils.crearBotonEstandar("Siguiente");
+        btnSiguiente.setPreferredSize(new Dimension(120, 35));
+        
+        panelPaginacion.add(btnAnterior);
+        panelPaginacion.add(lblInfoPagina);
+        panelPaginacion.add(btnSiguiente);
+        
+        // Listeners para la navegación de páginas
+        btnAnterior.addActionListener(e -> {
+            if (paginaActual > 0) {
+                paginaActual--;
+                redibujarLibros(onLibroSeleccionado);
+                // Resetea el scroll hacia arriba automáticamente al cambiar de página
+                SwingUtilities.invokeLater(() -> scrollPane.getVerticalScrollBar().setValue(0));
+            }
+        });
+        
+        btnSiguiente.addActionListener(e -> {
+            int totalPaginas = (int) Math.ceil((double) todosLosLibros.size() / LIBROS_POR_PAGINA);
+            if (paginaActual < totalPaginas - 1) {
+                paginaActual++;
+                redibujarLibros(onLibroSeleccionado);
+                // Resetea el scroll hacia arriba automáticamente al cambiar de página
+                SwingUtilities.invokeLater(() -> scrollPane.getVerticalScrollBar().setValue(0));
+            }
+        });
+        
+        add(scrollPane, BorderLayout.CENTER);
+        
+        // Dibujamos la primera página de libros al arrancar la vista
+        redibujarLibros(onLibroSeleccionado);
+        
         // Forzamos el scroll al inicio (arriba)
         SwingUtilities.invokeLater(() -> scrollPane.getVerticalScrollBar().setValue(0));
-        add(scrollPane, BorderLayout.CENTER);
         
         // Seccion Derecha - Filtros y Generacion de reportes (separados9
         JPanel pnlLateral = new JPanel(null);
@@ -154,5 +197,62 @@ public class VistaListaLibros extends JPanel {
         
         wrapperFiltro.add(pnlLateral, BorderLayout.NORTH);
         add(wrapperFiltro, BorderLayout.EAST);
+    }
+    
+    
+    // --- Método enfocado en renderizar únicamente el subconjunto de la página actual ---
+    private void redibujarLibros(Consumer<Libro> onLibroSeleccionado) {
+        panelListaLibros.removeAll();
+        
+        if (todosLosLibros.isEmpty()) {
+            panelListaLibros.add(UIUtils.crearEtiquetaVacia("No se encontraron libros para esta vista"));
+            lblInfoPagina.setText("Página 0 de 0");
+            btnAnterior.setEnabled(false);
+            btnAnterior.setBackground(PaletaColores.BOTON_DESHABILITADO);
+            btnAnterior.setForeground(PaletaColores.TEXTO_GRIS_CLARO);
+            btnSiguiente.setEnabled(false);
+            btnSiguiente.setBackground(PaletaColores.BOTON_DESHABILITADO);
+            btnSiguiente.setForeground(PaletaColores.TEXTO_GRIS_CLARO);
+        } else {
+            // Cálculos lógicos para la sublista
+            int inicio = paginaActual * LIBROS_POR_PAGINA;
+            int fin = Math.min(inicio + LIBROS_POR_PAGINA, todosLosLibros.size());
+            
+            for (int i = inicio; i < fin; i++) {
+                Libro l = todosLosLibros.get(i);
+                panelListaLibros.add(new TarjetaLibro(l, () -> onLibroSeleccionado.accept(l)));
+            }
+            
+            int totalPaginas = (int) Math.ceil((double) todosLosLibros.size() / LIBROS_POR_PAGINA);
+            lblInfoPagina.setText("Página " + (paginaActual + 1) + " de " + totalPaginas);
+            
+            // Control visual dinámico para el botón Anterior
+            if (paginaActual > 0) {
+                btnAnterior.setEnabled(true);
+                btnAnterior.setBackground(PaletaColores.PRIMARIO);
+                btnAnterior.setForeground(PaletaColores.TEXTO_BLANCO);
+            } else {
+                btnAnterior.setEnabled(false);
+                btnAnterior.setBackground(PaletaColores.BOTON_DESHABILITADO);
+                btnAnterior.setForeground(PaletaColores.TEXTO_GRIS_CLARO);
+            }
+            
+            // Control visual dinámico para el botón Siguiente
+            if (fin < todosLosLibros.size()) {
+                btnSiguiente.setEnabled(true);
+                btnSiguiente.setBackground(PaletaColores.PRIMARIO);
+                btnSiguiente.setForeground(PaletaColores.TEXTO_BLANCO);
+            } else {
+                btnSiguiente.setEnabled(false);
+                btnSiguiente.setBackground(PaletaColores.BOTON_DESHABILITADO);
+                btnSiguiente.setForeground(PaletaColores.TEXTO_GRIS_CLARO);
+            }
+        }
+        
+        panelListaLibros.add(Box.createVerticalStrut(20));
+        panelListaLibros.add(panelPaginacion);
+        
+        panelListaLibros.revalidate();
+        panelListaLibros.repaint();
     }
 }
