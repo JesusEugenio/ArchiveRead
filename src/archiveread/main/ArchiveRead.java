@@ -37,6 +37,10 @@ public class ArchiveRead extends JFrame {
     // Estado de la sesión actual
     private Usuario usuarioActual = null; 
     
+    // Variables para guardar el estado actual del catalogo
+    private int ultimaPaginaCatalogo = 0;
+    private String ultimoFiltroCatalogo = "Todas";
+    
     // Punto de arranque de Java
     public static void main(String[] args) {
     	
@@ -150,8 +154,18 @@ public class ArchiveRead extends JFrame {
     	panelPrincipal.repaint();
     }
     
-    // Pedimos la lista de libros al gestor y se la mandamos a VistaListaLibros para que la dibuje
+    
+    // Mantenemos el método original como un puente (Ej. si das clic al logo, resetea todo a 0)
     private void mostrarCatalogo(String categoriaFiltro) {
+        mostrarCatalogo(categoriaFiltro, 0);
+    }
+    
+    // Pedimos la lista de libros al gestor y se la mandamos a VistaListaLibros para que la dibuje
+    private void mostrarCatalogo(String categoriaFiltro, int paginaDestino) {
+    	// Guardamos el estado para el futuro
+        this.ultimoFiltroCatalogo = categoriaFiltro;
+        this.ultimaPaginaCatalogo = paginaDestino;
+    	
     	String tituloCatalogo = categoriaFiltro.equals("Todas") ?
     			"Libros Recientes" : "Libros de " + categoriaFiltro + ": ";
     	
@@ -163,7 +177,9 @@ public class ArchiveRead extends JFrame {
     			cat -> mostrarCatalogo(cat),
     			() -> gestorReportes.generarReporteCategorias(this, gestorBiblioteca),
     			() -> gestorReportes.generarReporteAutores(this, gestorBiblioteca), 
-    			libro -> mostrarDetalleLibro(libro)
+    			libro -> mostrarDetalleLibro(libro),
+    			paginaDestino, 
+                nuevaPagina -> this.ultimaPaginaCatalogo = nuevaPagina // Cable que guarda el numero si el usuario avanza
     	));
     }
     
@@ -202,7 +218,8 @@ public class ArchiveRead extends JFrame {
                 cat -> mostrarCatalogo(cat),
                 () -> gestorReportes.generarReporteCategorias(this, gestorBiblioteca),
                 () -> gestorReportes.generarReporteAutores(this, gestorBiblioteca), 
-                libro -> mostrarDetalleLibro(libro)
+                libro -> mostrarDetalleLibro(libro),
+                0, pag -> {}
         ));
     }
     
@@ -218,8 +235,8 @@ public class ArchiveRead extends JFrame {
     	cambiarVista(new VistaDetalleLibro(
     			libro,
     			usuarioActual, 
-    			() -> mostrarCatalogo("Todas"), // Runnable onVolverCatalogo
-    			() -> {rentarLibro(libro); mostrarDetalleLibro(libro, abrirOnReviews); }, // Runnable onRentarLibro
+    			() -> mostrarCatalogo(ultimoFiltroCatalogo, ultimaPaginaCatalogo), 			// Runnable onVolverCatalogo
+    			() -> {rentarLibro(libro); mostrarDetalleLibro(libro, abrirOnReviews); }, 	// Runnable onRentarLibro
     			() -> {devolverLibro(libro); mostrarDetalleLibro(libro, abrirOnReviews); }, // Runnable onDevolverLibro
     			() -> { // Runnable onToggleGuardar
     				if (usuarioActual == null) {
@@ -298,7 +315,7 @@ public class ArchiveRead extends JFrame {
     			guardados,
     			
     			// Cable: volver (onVolverCatalogo)
-    			() -> mostrarCatalogo("Todas"),
+    			() -> mostrarCatalogo(ultimoFiltroCatalogo, ultimaPaginaCatalogo),
     			
     			libro -> mostrarDetalleLibro(libro), // onLibroSeleccionado
 

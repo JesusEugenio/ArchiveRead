@@ -33,9 +33,11 @@ public class VistaListaLibros extends JPanel {
 	// Recibe el título, la lista de libros ya filtrada y los comandos a ejecutar (Consumers/Runnables)
     public VistaListaLibros(String tituloLabel, ArrayList<Libro> librosMostrados, String filtroActual,
                             ArrayList<String> listaCategorias, Consumer<String> onFiltrar, Runnable onReporteCat,
-                            Runnable onReporteAut, Consumer<Libro> onLibroSeleccionado) {
+                            Runnable onReporteAut, Consumer<Libro> onLibroSeleccionado,
+                            int paginaInicial, Consumer<Integer> onPaginaCambiada) {
     	
     	this.todosLosLibros = librosMostrados;
+    	this.paginaActual = paginaInicial;
         
         // Contenedor base
         setLayout(new BorderLayout(20, 20));
@@ -85,6 +87,7 @@ public class VistaListaLibros extends JPanel {
         btnAnterior.addActionListener(e -> {
             if (paginaActual > 0) {
                 paginaActual--;
+                onPaginaCambiada.accept(paginaActual);
                 redibujarLibros(onLibroSeleccionado);
                 // Resetea el scroll hacia arriba automáticamente al cambiar de página
                 SwingUtilities.invokeLater(() -> scrollPane.getVerticalScrollBar().setValue(0));
@@ -95,6 +98,7 @@ public class VistaListaLibros extends JPanel {
             int totalPaginas = (int) Math.ceil((double) todosLosLibros.size() / LIBROS_POR_PAGINA);
             if (paginaActual < totalPaginas - 1) {
                 paginaActual++;
+                onPaginaCambiada.accept(paginaActual);
                 redibujarLibros(onLibroSeleccionado);
                 // Resetea el scroll hacia arriba automáticamente al cambiar de página
                 SwingUtilities.invokeLater(() -> scrollPane.getVerticalScrollBar().setValue(0));

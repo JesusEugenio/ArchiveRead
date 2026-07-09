@@ -36,6 +36,11 @@ public class PanelHeader extends JPanel {
         JLabel lblLogo = new JLabel("ArchiveRead");
         lblLogo.setFont(CargarFuente.getBold(22f));
         lblLogo.setForeground(PaletaColores.PRIMARIO);
+        
+        Icon logoIcon = UIUtils.escalarImagenAltaCalidad("icons/ArchiveRead_icon.png", 35, 35);
+        lblLogo.setIcon(logoIcon);
+        lblLogo.setIconTextGap(10); // Añadimos 10 pixeles de separación entre el icono y el titulo
+        
         lblLogo.setCursor(new Cursor(Cursor.HAND_CURSOR));
         lblLogo.addMouseListener(new MouseAdapter() {
             @Override public void mouseClicked(MouseEvent e) { onLogoClick.run(); }

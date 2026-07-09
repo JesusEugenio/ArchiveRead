@@ -70,10 +70,8 @@ public class VistaNuevoLibro extends JPanel {
                 btnSubirPortada.setText("Cambiar portada");
                 btnSubirPortada.setBackground(PaletaColores.BLANCO);
 
-                ImageIcon icon = new ImageIcon(rutaImagenSeleccionada[0]);
-                Image img = icon.getImage().getScaledInstance(218, 288, Image.SCALE_SMOOTH);
                 lblPreview.setText(""); 
-                lblPreview.setIcon(new ImageIcon(img));
+                lblPreview.setIcon(UIUtils.escalarImagenAltaCalidad(rutaImagenSeleccionada[0], 218, 288));
             }
         });
         
