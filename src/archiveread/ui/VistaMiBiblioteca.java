@@ -114,9 +114,7 @@ public class VistaMiBiblioteca extends JPanel{
 		fila.setAlignmentX(Component.LEFT_ALIGNMENT);
 		
 		// Portada
-		ImageIcon iconoOriginal = new ImageIcon(libro.getRutaImagen());
-		Image imgEscalada = iconoOriginal.getImage().getScaledInstance(70, 105, Image.SCALE_SMOOTH);
-		JLabel lblPortada = new JLabel(new ImageIcon(imgEscalada));
+		JLabel lblPortada = new JLabel(UIUtils.escalarImagenAltaCalidad(libro.getRutaImagen(), 70, 105));
 		lblPortada.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		
 		lblPortada.addMouseListener(new MouseAdapter() {

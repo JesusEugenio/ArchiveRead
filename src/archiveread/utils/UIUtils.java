@@ -2,9 +2,17 @@ package archiveread.utils;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+
+// =========================================================================
+// UIUtils
+// Clase para rediseñar estilos de botones y textos - reduce lineas de codigo
+// =========================================================================
 
 public class UIUtils {
 	
@@ -145,5 +153,49 @@ public class UIUtils {
     	txt.setAlignmentX(Component.LEFT_ALIGNMENT);
     	return txt;
     }
+    
+    // Retiene la imagen original en HD y la renderiza en tiempo real usando el 
+    // motor gráfico al momento de pintar, solucionando los pixeles del escalado 1.25
+    public static Icon escalarImagenAltaCalidad(String ruta, int ancho, int alto) {
+        try {
+            java.io.File archivo = new java.io.File(ruta);
+            if (!archivo.exists()) return new ImageIcon(); // Retorno seguro
+
+            // Cargamos la imagen original en su resolución nativa más alta
+            final Image imgOriginal = javax.imageio.ImageIO.read(archivo);
+
+            // Creamos y devolvemos un Icono Inteligente que se auto-dibuja
+            return new Icon() {
+                @Override
+                public void paintIcon(Component c, Graphics g, int x, int y) {
+                    Graphics2D g2d = (Graphics2D) g.create();
+                    
+                    // Activamos los motores de suavizado del hardware gráfico
+                    g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+                    g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                    g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    
+                    // Plasmamos la imagen HD directamente en las coordenadas y tamaño solicitados
+                    g2d.drawImage(imgOriginal, x, y, ancho, alto, null);
+                    g2d.dispose();
+                }
+
+                @Override
+                public int getIconWidth() {
+                    return ancho;
+                }
+
+                @Override
+                public int getIconHeight() {
+                    return alto;
+                }
+            };
+
+        } catch (Exception e) {
+            System.err.println("Error procesando la imagen: " + ruta);
+            return new ImageIcon();
+        }
+    }
+    
 }
 

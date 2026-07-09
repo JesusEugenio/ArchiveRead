@@ -58,9 +58,7 @@ public class VistaDetalleLibro extends JPanel {
     	pnlBannerOscuro.setBorder(new EmptyBorder(40, 40, 40, 40));
     	
     	// Cargar Portada
-    	ImageIcon iconoPortada = new ImageIcon(libro.getRutaImagen());
-    	Image imgEscalada = iconoPortada.getImage().getScaledInstance(180, 260, Image.SCALE_SMOOTH);
-    	JLabel lblImagen = new JLabel(new ImageIcon(imgEscalada));
+    	JLabel lblImagen = new JLabel(UIUtils.escalarImagenAltaCalidad(libro.getRutaImagen(), 180, 260));;
     	lblImagen.setVerticalAlignment(SwingConstants.TOP);
     	pnlBannerOscuro.add(lblImagen, BorderLayout.WEST);
     	

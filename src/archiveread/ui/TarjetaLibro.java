@@ -46,9 +46,7 @@ public class TarjetaLibro extends JPanel {
         JPanel pnlIzq = new JPanel(new BorderLayout());
         pnlIzq.setBackground(PaletaColores.BLANCO);
         
-        ImageIcon iconoPortada = new ImageIcon(l.getRutaImagen());
-        Image imgEscalada = iconoPortada.getImage().getScaledInstance(120, 170, Image.SCALE_SMOOTH);
-        JLabel lblImagen = new JLabel(new ImageIcon(imgEscalada));
+        JLabel lblImagen = new JLabel(UIUtils.escalarImagenAltaCalidad(l.getRutaImagen(), 120, 170));
         lblImagen.setCursor(new Cursor(Cursor.HAND_CURSOR));
         lblImagen.addMouseListener(eventoClic); // La portada funcionara como boton
         pnlIzq.add(lblImagen, BorderLayout.CENTER);

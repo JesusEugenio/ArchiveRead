@@ -39,6 +39,11 @@ public class ArchiveRead extends JFrame {
     
     // Punto de arranque de Java
     public static void main(String[] args) {
+    	
+    	// Desactiva el estiramiento borroso del OS y le pide a Java hacer un zoom nítido
+        System.setProperty("sun.java2d.dpiaware", "true");
+        System.setProperty("sun.java2d.uiScale", "1.25");
+        
         EventQueue.invokeLater(() -> {
             try {
                 ArchiveRead frame = new ArchiveRead();
