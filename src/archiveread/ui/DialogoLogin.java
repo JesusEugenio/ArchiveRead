@@ -1,15 +1,14 @@
 package archiveread.ui;
 
 import archiveread.modelos.Usuario;
-import archiveread.utils.CargarFuente;
-import archiveread.utils.PaletaColores;
-import archiveread.utils.UIUtils;
+import archiveread.utils.*;
 import archiveread.gestores.GestorUsuarios;
 
 // Simplificamos llamada a librerias con .*
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.awt.event.*;
 
 //=========================================================================
 // DialogoLogin
@@ -25,6 +24,8 @@ public class DialogoLogin extends JDialog {
 		
 		// Centra la ventana y evita que el usuario la haga grande o chica
 		setSize(380, 320);
+		Image iconoApp = new ImageIcon("icons/ArchiveRead_icon.png").getImage();
+		this.setIconImage(iconoApp);
 		setLocationRelativeTo(padre);
 		setResizable(false);
 		setLayout(new BorderLayout());
@@ -99,9 +100,9 @@ public class DialogoLogin extends JDialog {
 				//Encontró al usuario
 				this.usuarioAutenticado = u;
 				dispose();	//destruye la ventana
-			}else {
+			} else {
 				//No encontró al usuario
-				JOptionPane.showMessageDialog(this, "Credenciales incorrectas", "Error", JOptionPane.ERROR_MESSAGE);
+				DialogoModerno.mostrarMensaje(this, "Error de Acceso", "Usuario o contraseña incorrectos.<br>Por favor, intenta de nuevo.", DialogoModerno.TipoMensaje.ERROR);
 			}
 		});
 		
@@ -114,9 +115,9 @@ public class DialogoLogin extends JDialog {
 		lblRegistro.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		
 		//Si el usuario le da Clic al texto:
-		lblRegistro.addMouseListener(new java.awt.event.MouseAdapter() {
+		lblRegistro.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseClicked(java.awt.event.MouseEvent e) {
+			public void mouseClicked(MouseEvent e) {
 				//Se abre otra ventana y se le pasa el archivo GestorUsuarios
 				DialogoRegistro dialogReg = new DialogoRegistro(DialogoLogin.this, gestorUsuarios);
 				dialogReg.setVisible(true);

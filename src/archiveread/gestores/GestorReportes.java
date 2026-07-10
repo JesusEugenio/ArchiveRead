@@ -2,6 +2,7 @@ package archiveread.gestores;
 
 import archiveread.modelos.Libro;
 import archiveread.modelos.Usuario;
+import archiveread.utils.DialogoModerno;
 import archiveread.utils.FileUtils;
 
 import java.awt.Component;
@@ -48,9 +49,9 @@ public class GestorReportes {
                     writer.write("No hay libros prestados en este momento. \n");
                 }
             }
-            JOptionPane.showMessageDialog(ventanaPadre, "Reporte generado Exitosamente en 'reporte_prestamos.txt'");
+            DialogoModerno.mostrarMensaje(ventanaPadre, "Reporte generado", "Reporte generado Exitosamente en 'reporte_prestamos.txt'",DialogoModerno.TipoMensaje.EXITO);
         } catch(IOException e) {
-            JOptionPane.showMessageDialog(ventanaPadre, "Error al generar el reporte de préstamos.", "Error", JOptionPane.ERROR_MESSAGE);
+        	DialogoModerno.mostrarMensaje(ventanaPadre, "Error", "Error al generar el reporte de préstamos.", DialogoModerno.TipoMensaje.ERROR);
             e.printStackTrace();
         }
     }
@@ -77,7 +78,7 @@ public class GestorReportes {
                     }
                 }
             }
-            JOptionPane.showMessageDialog(ventanaPadre, "Reportes de categorías generados en la carpeta 'reportes_categorias'.");
+            DialogoModerno.mostrarMensaje(ventanaPadre, "Reportes generados", "Reportes de categorías generados en la carpeta 'reportes_categorias'.", DialogoModerno.TipoMensaje.EXITO);
         } catch(IOException e) {
             e.printStackTrace();
         }
@@ -114,7 +115,7 @@ public class GestorReportes {
                     }
                 }
             }
-            JOptionPane.showMessageDialog(ventanaPadre, "Reportes de autores generados en la carpeta 'reportes_autores'.");
+            DialogoModerno.mostrarMensaje(ventanaPadre, "Reportes generados", "Reportes de autores generados en la carpeta 'reportes_autores'", DialogoModerno.TipoMensaje.EXITO);
         } catch(IOException e) {
             e.getStackTrace();
         }

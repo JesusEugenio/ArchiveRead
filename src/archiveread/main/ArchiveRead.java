@@ -283,9 +283,10 @@ public class ArchiveRead extends JFrame {
     			},
     			// OnEliminarLibro
     			() -> {
-    				int confirm = JOptionPane.showConfirmDialog(this, "Estas seguro de eliminar el libro '" + libro.getTitulo() + "'?\nEsta accion no puede revertirse",
-    						"Confirmar Eliminacion", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-    				if (confirm == JOptionPane.YES_OPTION) {
+    				boolean confirm = DialogoModerno.mostrarConfirmacion(this, 
+    					    "Confirmar Eliminación", 
+    					    "¿Estás seguro de eliminar el libro <b>'" + libro.getTitulo() + "'</b>?<br>Esta acción no puede revertirse");
+    				if (confirm) {
     					gestorBiblioteca.eliminarLibro(libro);
     					JOptionPane.showMessageDialog(this, "El libro se elimino correctamente");
     					mostrarCatalogo("Todas");
@@ -360,7 +361,7 @@ public class ArchiveRead extends JFrame {
     		gestorBiblioteca.registrarLibro(nuevoLibro);
     		
     		// Avisamos al usuario y regresamos al menu principal
-    		JOptionPane.showMessageDialog(this, "El libro '" + nuevoLibro.getTitulo() + "' ha sido añadido!");
+    		DialogoModerno.mostrarMensaje(this, "Libro Añadido", "El libro se guardó exitosamente", DialogoModerno.TipoMensaje.EXITO);
     		mostrarCatalogo("Todas");
     	}));
     }

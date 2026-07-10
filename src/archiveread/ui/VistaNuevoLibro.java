@@ -219,7 +219,7 @@ public class VistaNuevoLibro extends JPanel {
         	
         	// Si falta algun dato, frena y avisa
         	if (titulo.isEmpty() || autor.isEmpty() || pags.isEmpty() || sinopsis.isEmpty() || catsSeleccionadas.isEmpty()) {
-        		JOptionPane.showMessageDialog(this, "Completa los campos faltantes", "Faltan datos", JOptionPane.WARNING_MESSAGE);
+        		DialogoModerno.mostrarMensaje(this, "Campos Incompletos", "Por favor, completa todos los campos<br>antes de continuar.", DialogoModerno.TipoMensaje.ADVERTENCIA);
         		return; // Detiene la ejecucion de esta funcion lambda (e ->)
         	}
         	
@@ -242,7 +242,7 @@ public class VistaNuevoLibro extends JPanel {
         		
         	} catch(NumberFormatException ex) {
         		// Si el parseInt falla, atrapamos la excepcion
-        		JOptionPane.showMessageDialog(this, "Las paginas deben tener un valor numerico entero", "Error", JOptionPane.ERROR_MESSAGE);        	
+        		DialogoModerno.mostrarMensaje(this, "Error", "Las paginas deben tener un valor numerico entero", DialogoModerno.TipoMensaje.ERROR);        	
         	}
         });
         

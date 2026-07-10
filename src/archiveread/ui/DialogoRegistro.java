@@ -1,9 +1,7 @@
 package archiveread.ui;
 
 import archiveread.gestores.GestorUsuarios;
-import archiveread.utils.CargarFuente;
-import archiveread.utils.PaletaColores;
-import archiveread.utils.UIUtils;
+import archiveread.utils.*;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -23,6 +21,8 @@ public class DialogoRegistro extends JDialog {
         // Modalidad activada para bloquear el Login de fondo
         super(parent, "Registro de Nuevo Usuario", true);
         setSize(400, 380); 
+        Image iconoApp = new ImageIcon("icons/ArchiveRead_icon.png").getImage();
+        this.setIconImage(iconoApp);
         setLocationRelativeTo(parent);
         setResizable(false);
         setLayout(new BorderLayout());
@@ -113,12 +113,12 @@ public class DialogoRegistro extends JDialog {
 
             // Validación que evita guardar usuarios con datos en blanco
             if (nom.isEmpty() || mat.isEmpty() || pass.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Completa todos los campos.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            	DialogoModerno.mostrarMensaje(this, "Aviso", "Completa todos los campos", DialogoModerno.TipoMensaje.ADVERTENCIA);
                 return; // Corta la ejecución aqui si faltan datos
             }
             
             if (mat.length() != 6) {
-            	JOptionPane.showMessageDialog(this, "La matrícula debe tener exactamente 6 dígitos (Ej. 548821).", "Aviso", JOptionPane.WARNING_MESSAGE);
+            	DialogoModerno.mostrarMensaje(this, "Aviso", "La matrícula debe tener exactamente 6 dígitos (Ej. 548821)", DialogoModerno.TipoMensaje.ERROR);
             	return; 
             }
 
@@ -127,11 +127,11 @@ public class DialogoRegistro extends JDialog {
 
             // Analizamos la respuesta del Gestor
             if (exito) {
-                JOptionPane.showMessageDialog(this, "¡Cuenta creada exitosamente! Ya puedes iniciar sesión.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            	DialogoModerno.mostrarMensaje(this, "Éxito", "¡Cuenta creada exitosamente! Ya puedes iniciar sesión", DialogoModerno.TipoMensaje.EXITO);
                 dispose(); // Cierra el registro y libera la pantalla para volver al Login
             } else {
                 // Si 'exito' es falso, significa que la matrícula ya existía en el HashMap
-                JOptionPane.showMessageDialog(this, "La matrícula " + mat + " ya está registrada.", "Error", JOptionPane.ERROR_MESSAGE);
+            	DialogoModerno.mostrarMensaje(this, "Error", "La matrícula " + mat + " ya está registrada", DialogoModerno.TipoMensaje.ERROR);
             }
         });
 
